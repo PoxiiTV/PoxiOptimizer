@@ -502,7 +502,7 @@ fn find(id: &str) -> Result<Tweak, String> {
 // ---------------------------------------------------------------------------
 
 /// Devuelve la metadata de todos los tweaks (sin los comandos internos).
-#[tauri::command]
+#[tauri::command(async)]
 pub fn get_tweaks() -> Vec<TweakMeta> {
     catalog()
         .into_iter()
@@ -517,14 +517,14 @@ pub fn get_tweaks() -> Vec<TweakMeta> {
 }
 
 /// Aplica un tweak por su id.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn apply_tweak(id: String) -> Result<String, String> {
     let tw = find(&id)?;
     ps::ps_capture(&apply_script(&tw)).map(|_| format!("Aplicado: {}", tw.title))
 }
 
 /// Revierte un tweak por su id.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn revert_tweak(id: String) -> Result<String, String> {
     let tw = find(&id)?;
     ps::ps_capture(&revert_script(&tw)).map(|_| format!("Revertido: {}", tw.title))
@@ -532,7 +532,7 @@ pub fn revert_tweak(id: String) -> Result<String, String> {
 
 /// Comprueba el estado de todos los tweaks en una sola llamada.
 /// Devuelve un objeto { id: bool }.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn check_all_tweaks() -> Result<Value, String> {
     let mut lines = String::from("$ErrorActionPreference='SilentlyContinue'\n$r=[ordered]@{}\n");
     for tw in catalog() {

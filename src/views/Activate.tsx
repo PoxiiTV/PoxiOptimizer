@@ -1,23 +1,12 @@
-import { useEffect, useState } from "react";
 import { KeyRound, Monitor, FileText, ListChecks, ShieldCheck, ShieldAlert } from "lucide-react";
 import { Card, PageHeader } from "../components/ui";
 import { useStore, useT } from "../store";
-import {
-  activateWindows,
-  activateOffice,
-  openMasMenu,
-  getActivationStatus,
-  type ActivationStatus,
-} from "../lib/tauri";
+import { activateWindows, activateOffice, openMasMenu } from "../lib/tauri";
 
 export function Activate() {
   const t = useT();
   const pushToast = useStore((s) => s.pushToast);
-  const [act, setAct] = useState<ActivationStatus | null>(null);
-
-  useEffect(() => {
-    getActivationStatus().then(setAct).catch(() => {});
-  }, []);
+  const act = useStore((s) => s.activation);
 
   const run = async (fn: () => Promise<string>) => {
     try {

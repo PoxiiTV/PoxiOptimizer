@@ -5,7 +5,7 @@ use crate::ps;
 use serde_json::Value;
 
 /// Devuelve un objeto JSON con la informacion del equipo para el dashboard.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn get_system_info() -> Result<Value, String> {
     // Construimos el JSON directamente en PowerShell para una sola llamada.
     let script = r#"
@@ -83,17 +83,19 @@ pub fn is_elevated() -> bool {
 }
 
 /// Comando expuesto a la UI: indica si la app tiene privilegios de administrador.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn is_admin() -> bool {
     is_elevated()
 }
 
 /// Estado de activacion de Windows. Devuelve { activated, edition, detail }.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn get_activation_status() -> Result<Value, String> {
     let script = r#"
 $ErrorActionPreference = 'SilentlyContinue'
-$lic = Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%' AND PartialProductKey IS NOT NULL" | Select-Object -First 1
+# Filtramos por el ApplicationId de Windows para que WMI no enumere todos los
+# productos (Office, etc.), lo que acelera muchisimo la consulta.
+$lic = Get-CimInstance SoftwareLicensingProduct -Filter "ApplicationId='55c92734-d682-4d71-983e-d6ec3f16059f' AND PartialProductKey IS NOT NULL" | Select-Object -First 1
 $edition = (Get-CimInstance Win32_OperatingSystem).Caption
 if ($lic -and $lic.LicenseStatus -eq 1) {
   $activated = $true
@@ -111,7 +113,7 @@ if ($lic -and $lic.LicenseStatus -eq 1) {
 /// Crea un punto de restauracion del sistema antes de aplicar cambios.
 /// Habilita System Restore en la unidad del sistema si estuviera desactivado y
 /// elimina temporalmente el limite de frecuencia para garantizar la creacion.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn create_restore_point(description: String) -> Result<String, String> {
     let desc = description.replace('\'', "");
     let script = format!(

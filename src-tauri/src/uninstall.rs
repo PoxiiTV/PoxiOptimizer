@@ -15,7 +15,7 @@ pub struct Program {
 }
 
 /// Lista los programas instalados (desde las claves Uninstall del registro).
-#[tauri::command]
+#[tauri::command(async)]
 pub fn list_programs() -> Result<Vec<Program>, String> {
     let script = r#"
 $ErrorActionPreference='SilentlyContinue'
@@ -70,7 +70,7 @@ $items | Sort-Object name -Unique | ConvertTo-Json -Compress
 
 /// Desinstala un programa. Lee del registro el comando de desinstalacion fresco
 /// (no confiamos en datos enviados por la UI) y lo ejecuta.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn uninstall_program(id: String, source: String) -> Result<String, String> {
     // Validamos el id: nombre de subclave del registro.
     if id.is_empty()

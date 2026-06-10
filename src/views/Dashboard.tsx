@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   MemoryStick,
@@ -16,13 +16,7 @@ import {
 } from "lucide-react";
 import { Card } from "../components/ui";
 import { useStore, useT } from "../store";
-import {
-  getSystemInfo,
-  getActivationStatus,
-  createRestorePoint,
-  type SystemInfo,
-  type ActivationStatus,
-} from "../lib/tauri";
+import { createRestorePoint } from "../lib/tauri";
 
 function Ring({ percent, label }: { percent: number; label: string }) {
   const r = 30;
@@ -65,14 +59,9 @@ export function Dashboard() {
   const setView = useStore((s) => s.setView);
   const pushToast = useStore((s) => s.pushToast);
   const isAdmin = useStore((s) => s.isAdmin);
-  const [info, setInfo] = useState<SystemInfo | null>(null);
-  const [act, setAct] = useState<ActivationStatus | null>(null);
+  const info = useStore((s) => s.systemInfo);
+  const act = useStore((s) => s.activation);
   const [restoring, setRestoring] = useState(false);
-
-  useEffect(() => {
-    getSystemInfo().then(setInfo).catch(() => {});
-    getActivationStatus().then(setAct).catch(() => {});
-  }, []);
 
   const doRestore = async () => {
     setRestoring(true);

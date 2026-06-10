@@ -143,7 +143,7 @@ fn friendly(name: &str) -> String {
 }
 
 /// Lista los paquetes Appx instalados para el usuario actual.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn list_appx() -> Result<Vec<AppxItem>, String> {
     let script = r#"
 $ErrorActionPreference='SilentlyContinue'
@@ -191,7 +191,7 @@ Get-AppxPackage | Where-Object { -not $_.IsFramework -and $_.SignatureKind -ne '
 /// Elimina un paquete Appx para el usuario actual y su version aprovisionada
 /// (para que no vuelva a instalarse en cuentas nuevas). Rechaza paquetes
 /// protegidos por seguridad.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn remove_appx(name: String) -> Result<String, String> {
     if is_protected(&name) {
         return Err(format!(

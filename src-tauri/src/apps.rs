@@ -3,7 +3,7 @@
 use crate::ps;
 
 /// Comprueba si winget esta disponible en el sistema.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn winget_available() -> bool {
     matches!(
         ps::run_powershell("if (Get-Command winget -ErrorAction SilentlyContinue) { 'yes' } else { 'no' }"),
@@ -12,7 +12,7 @@ pub fn winget_available() -> bool {
 }
 
 /// Instala una aplicacion por su id de winget de forma silenciosa.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn install_app(winget_id: String) -> Result<String, String> {
     // Validamos el id: winget ids son alfanumericos con puntos, guiones y '+'.
     if winget_id.is_empty()

@@ -12,7 +12,7 @@ pub struct CleanupResult {
 
 /// Ejecuta una limpieza segura del sistema y devuelve el espacio liberado.
 /// Solo elimina contenido de carpetas temporales y caches reconstruibles.
-#[tauri::command]
+#[tauri::command(async)]
 pub fn run_cleanup(temp: bool, update_cache: bool, recycle_bin: bool, dns: bool) -> Result<CleanupResult, String> {
     let script = format!(
         r#"

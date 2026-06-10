@@ -1,5 +1,12 @@
 import { create } from "zustand";
 import { translate, type Lang } from "./lib/i18n";
+import {
+  getSystemInfo,
+  getActivationStatus,
+  isAdmin,
+  type SystemInfo,
+  type ActivationStatus,
+} from "./lib/tauri";
 
 export type View =
   | "dashboard"
@@ -22,11 +29,16 @@ interface AppState {
   view: View;
   toasts: Toast[];
   isAdmin: boolean;
+  // Datos del sistema cacheados (se cargan una vez por sesión).
+  systemInfo: SystemInfo | null;
+  activation: ActivationStatus | null;
+  systemLoaded: boolean;
   setLang: (lang: Lang) => void;
   setView: (view: View) => void;
   setAdmin: (v: boolean) => void;
   pushToast: (message: string, type?: Toast["type"]) => void;
   dismissToast: (id: number) => void;
+  loadSystem: (force?: boolean) => void;
 }
 
 const storedLang = (localStorage.getItem("poxi.lang") as Lang) || "es";
@@ -38,6 +50,9 @@ export const useStore = create<AppState>((set, get) => ({
   view: "dashboard",
   toasts: [],
   isAdmin: true,
+  systemInfo: null,
+  activation: null,
+  systemLoaded: false,
   setLang: (lang) => {
     localStorage.setItem("poxi.lang", lang);
     set({ lang });
@@ -51,6 +66,15 @@ export const useStore = create<AppState>((set, get) => ({
   },
   dismissToast: (id) =>
     set({ toasts: get().toasts.filter((t) => t.id !== id) }),
+  loadSystem: (force = false) => {
+    if (get().systemLoaded && !force) return;
+    set({ systemLoaded: true });
+    // Cada dato se actualiza por separado en cuanto llega; la consulta de
+    // activación es lenta (WMI) y no debe retrasar al resto.
+    isAdmin().then((v) => set({ isAdmin: v })).catch(() => {});
+    getSystemInfo().then((i) => set({ systemInfo: i })).catch(() => {});
+    getActivationStatus().then((a) => set({ activation: a })).catch(() => {});
+  },
 }));
 
 /** Hook de traducción ligado al idioma actual del store. */

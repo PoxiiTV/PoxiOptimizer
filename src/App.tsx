@@ -4,7 +4,6 @@ import { TitleBar } from "./components/TitleBar";
 import { Sidebar } from "./components/Sidebar";
 import { Toasts } from "./components/Toasts";
 import { useStore } from "./store";
-import { isAdmin } from "./lib/tauri";
 
 import { Dashboard } from "./views/Dashboard";
 import { Optimize } from "./views/Optimize";
@@ -28,12 +27,12 @@ const VIEWS = {
 
 export default function App() {
   const view = useStore((s) => s.view);
-  const setAdmin = useStore((s) => s.setAdmin);
+  const loadSystem = useStore((s) => s.loadSystem);
   const ViewComponent = VIEWS[view];
 
   useEffect(() => {
-    isAdmin().then(setAdmin).catch(() => setAdmin(false));
-  }, [setAdmin]);
+    loadSystem();
+  }, [loadSystem]);
 
   return (
     <div className="relative h-full w-full flex flex-col text-[var(--color-text)] overflow-hidden">

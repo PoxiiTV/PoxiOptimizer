@@ -30,19 +30,19 @@ fn launch_mas(flags: &str) -> Result<String, String> {
 }
 
 /// Activa Windows de forma permanente con licencia digital (HWID).
-#[tauri::command]
+#[tauri::command(async)]
 pub fn activate_windows() -> Result<String, String> {
     launch_mas("/HWID")
 }
 
 /// Activa Microsoft Office de forma permanente (Ohook).
-#[tauri::command]
+#[tauri::command(async)]
 pub fn activate_office() -> Result<String, String> {
     launch_mas("/Ohook")
 }
 
 /// Abre el menu interactivo completo de MAS (todas las opciones disponibles).
-#[tauri::command]
+#[tauri::command(async)]
 pub fn open_mas_menu() -> Result<String, String> {
     launch_mas("")
 }
