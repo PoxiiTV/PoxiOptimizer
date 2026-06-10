@@ -1,0 +1,36 @@
+[package]
+name = "poxi-optimizer"
+version = "1.0.0"
+description = "PoxiOptimizer - La herramienta definitiva de optimizacion y activacion de Windows"
+authors = ["Poxi"]
+edition = "2021"
+
+[lib]
+name = "poxi_optimizer_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Comprobacion nativa de privilegios de administrador (sin coste de tamano:
+# windows-sys ya forma parte del arbol de dependencias de Tauri).
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.59", features = [
+  "Win32_Foundation",
+  "Win32_Security",
+  "Win32_System_Threading",
+] }
+
+# Perfil de release optimizado para tamano minimo del ejecutable final.
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
