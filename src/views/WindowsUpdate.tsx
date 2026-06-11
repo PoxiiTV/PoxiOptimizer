@@ -9,6 +9,7 @@ type Mode = "default" | "security" | "disabled";
 export function WindowsUpdate() {
   const t = useT();
   const pushToast = useStore((s) => s.pushToast);
+  const logAction = useStore((s) => s.logAction);
   const [mode, setMode] = useState<Mode | null>(null);
   const [applying, setApplying] = useState<Mode | null>(null);
 
@@ -49,6 +50,7 @@ export function WindowsUpdate() {
       await setWindowsUpdateMode(m);
       setMode(m);
       pushToast(t("common.done"), "success");
+      await logAction({ kind: "wupdate", label: `Windows Update configurado: ${m}`, can_undo: false });
     } catch (e) {
       pushToast(String(e), "error");
     } finally {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   MemoryStick,
@@ -13,10 +13,11 @@ import {
   Sparkles,
   ChevronRight,
   AlertTriangle,
+  Thermometer,
 } from "lucide-react";
 import { Card } from "../components/ui";
 import { useStore, useT } from "../store";
-import { createRestorePoint } from "../lib/tauri";
+import { createRestorePoint, getTemperatures, type TempInfo } from "../lib/tauri";
 
 function Ring({ percent, label }: { percent: number; label: string }) {
   const r = 30;
@@ -62,6 +63,14 @@ export function Dashboard() {
   const info = useStore((s) => s.systemInfo);
   const act = useStore((s) => s.activation);
   const [restoring, setRestoring] = useState(false);
+  const [temps, setTemps] = useState<TempInfo | null>(null);
+
+  useEffect(() => {
+    const load = () => getTemperatures().then(setTemps).catch(() => {});
+    load();
+    const id = setInterval(load, 30_000);
+    return () => clearInterval(id);
+  }, []);
 
   const doRestore = async () => {
     setRestoring(true);
@@ -170,8 +179,8 @@ export function Dashboard() {
         <p className="text-sm font-semibold mb-3.5">{t("dash.system")}</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
           <InfoRow icon={MonitorCog} label={info?.os_name ?? "Windows"} value={`${info?.os_version ?? ""} (build ${info?.os_build ?? ""})`} />
-          <InfoRow icon={Cpu} label="CPU" value={info?.cpu ?? "…"} />
-          <InfoRow icon={MonitorCog} label="GPU" value={info?.gpu ?? "…"} />
+          <InfoRow icon={Cpu} label="CPU" value={info?.cpu ?? "…"} temp={temps?.cpu} />
+          <InfoRow icon={MonitorCog} label="GPU" value={info?.gpu ?? "…"} temp={temps?.gpu} />
           <InfoRow icon={Clock} label={t("dash.uptime")} value={info ? `${info.uptime_hours} ${t("dash.hours")}` : "…"} />
         </div>
       </Card>
@@ -205,20 +214,40 @@ export function Dashboard() {
   );
 }
 
+function TempBadge({ celsius }: { celsius: number | null | undefined }) {
+  if (celsius == null) return null;
+  const hot = celsius >= 80;
+  const warm = celsius >= 65;
+  const color = hot
+    ? "text-[var(--color-danger)]"
+    : warm
+    ? "text-[var(--color-warning)]"
+    : "text-[var(--color-success)]";
+  return (
+    <span className={`flex items-center gap-0.5 text-xs font-semibold tabular-nums shrink-0 ${color}`}>
+      <Thermometer size={11} />
+      {celsius}°C
+    </span>
+  );
+}
+
 function InfoRow({
   icon: Icon,
   label,
   value,
+  temp,
 }: {
   icon: typeof Cpu;
   label: string;
   value: string;
+  temp?: number | null;
 }) {
   return (
     <div className="flex items-center gap-2.5 min-w-0">
       <Icon size={16} className="text-[var(--color-text-dim)] shrink-0" />
       <span className="text-[var(--color-text-muted)] shrink-0">{label}:</span>
-      <span className="truncate font-medium">{value}</span>
+      <span className="truncate font-medium flex-1">{value}</span>
+      <TempBadge celsius={temp} />
     </div>
   );
 }

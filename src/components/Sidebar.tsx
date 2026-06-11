@@ -12,6 +12,7 @@ import {
   Wrench,
   Rocket,
   Wand2,
+  Globe,
   Network as NetIcon,
   type LucideIcon,
 } from "lucide-react";
@@ -49,6 +50,7 @@ const GROUPS: { titleKey: string; items: Item[] }[] = [
       { view: "network", icon: NetIcon, labelKey: "nav.network" },
       { view: "wupdate", icon: RefreshCcw, labelKey: "nav.wupdate" },
       { view: "activate", icon: KeyRound, labelKey: "nav.activate" },
+      { view: "hosts", icon: Globe, labelKey: "nav.hosts" },
       { view: "settings", icon: Settings, labelKey: "nav.settings" },
     ],
   },

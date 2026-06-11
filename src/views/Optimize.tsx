@@ -32,6 +32,7 @@ export function Optimize() {
   const lang = useStore((s) => s.lang);
   const pushToast = useStore((s) => s.pushToast);
   const ensureRestorePoint = useStore((s) => s.ensureRestorePoint);
+  const logAction = useStore((s) => s.logAction);
   const [tweaks, setTweaks] = useState<TweakMeta[]>([]);
   const [states, setStates] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState<Record<string, boolean>>({});
@@ -67,6 +68,13 @@ export function Optimize() {
     try {
       const msg = next ? await applyTweak(tw.id) : await revertTweak(tw.id);
       pushToast(msg, "success");
+      await logAction({
+        kind: next ? "tweak_apply" : "tweak_revert",
+        label: `${next ? "Aplicado" : "Revertido"}: ${tw.title}`,
+        can_undo: true,
+        undo_kind: next ? "tweak_revert" : "tweak_apply",
+        undo_id: tw.id,
+      });
     } catch (e) {
       setStates((s) => ({ ...s, [tw.id]: !next })); // revertir en error
       pushToast(String(e), "error");
@@ -91,6 +99,9 @@ export function Optimize() {
     }
     setApplyingProfile(null);
     pushToast(`${ok} ${t("common.applied").toLowerCase()}`, "success");
+    if (ok > 0) {
+      await logAction({ kind: "tweak_apply", label: `Perfil aplicado: ${profileId} (${ok} tweaks)`, can_undo: false });
+    }
   };
 
   if (loading) return <CenterSpinner label={t("common.loading")} />;

@@ -236,6 +236,52 @@ const es: Dict = {
   "onb.skip": "Saltar",
   "onb.next": "Siguiente",
   "onb.start": "Empezar",
+
+  // Temperaturas (Dashboard)
+  "dash.temp": "Temperaturas",
+  "dash.temp.na": "N/D",
+
+  // Historial (Settings)
+  "history.title": "Historial de acciones",
+  "history.empty": "No hay acciones registradas todavía.",
+  "history.clear": "Limpiar historial",
+  "history.undo": "Deshacer",
+  "history.kind.tweak_apply": "Tweak aplicado",
+  "history.kind.tweak_revert": "Tweak revertido",
+  "history.kind.cleanup": "Limpieza",
+  "history.kind.debloat": "Bloatware eliminado",
+  "history.kind.dns": "DNS cambiado",
+  "history.kind.startup": "Inicio modificado",
+  "history.kind.wupdate": "Windows Update",
+  "history.kind.repair": "Reparación Windows",
+  "history.kind.activation": "Activación",
+  "history.kind.hosts": "Archivo hosts",
+  "history.kind.reg_backup": "Backup registro",
+
+  // Backup de registro (Settings)
+  "regbackup.title": "Backup del registro",
+  "regbackup.desc": "Exporta las claves de registro que tocan los tweaks antes de modificar nada.",
+  "regbackup.create": "Crear backup ahora",
+  "regbackup.open": "Abrir carpeta",
+  "regbackup.none": "No hay backups todavía.",
+  "regbackup.created": "Backup creado",
+
+  // Hosts
+  "nav.hosts": "Archivo Hosts",
+  "hosts.title": "Archivo Hosts",
+  "hosts.subtitle": "Edita el archivo hosts del sistema para bloquear dominios o redirigir DNS localmente.",
+  "hosts.add": "Añadir entrada",
+  "hosts.addIp": "IP (ej. 0.0.0.0)",
+  "hosts.addHost": "Dominio (ej. ads.example.com)",
+  "hosts.addComment": "Comentario (opcional)",
+  "hosts.reset": "Restaurar por defecto",
+  "hosts.resetConfirm": "¿Restaurar el archivo hosts al contenido por defecto de Windows?",
+  "hosts.blockTelemetry": "Bloquear telemetría de Microsoft",
+  "hosts.telemetryAdded": "Entradas de telemetría de Microsoft añadidas",
+  "hosts.save": "Guardar cambios",
+  "hosts.saved": "Archivo hosts guardado y DNS actualizado",
+  "hosts.noEntries": "El archivo hosts no tiene entradas activas.",
+  "hosts.info": "Las IPs 0.0.0.0 bloquean el acceso al dominio. El navegador no podrá resolver esa dirección.",
 };
 
 const en: Dict = {
@@ -464,6 +510,52 @@ const en: Dict = {
   "onb.skip": "Skip",
   "onb.next": "Next",
   "onb.start": "Start",
+
+  // Temperatures (Dashboard)
+  "dash.temp": "Temperatures",
+  "dash.temp.na": "N/A",
+
+  // History (Settings)
+  "history.title": "Action history",
+  "history.empty": "No actions recorded yet.",
+  "history.clear": "Clear history",
+  "history.undo": "Undo",
+  "history.kind.tweak_apply": "Tweak applied",
+  "history.kind.tweak_revert": "Tweak reverted",
+  "history.kind.cleanup": "Cleanup",
+  "history.kind.debloat": "Bloatware removed",
+  "history.kind.dns": "DNS changed",
+  "history.kind.startup": "Startup modified",
+  "history.kind.wupdate": "Windows Update",
+  "history.kind.repair": "Windows repair",
+  "history.kind.activation": "Activation",
+  "history.kind.hosts": "Hosts file",
+  "history.kind.reg_backup": "Registry backup",
+
+  // Registry backup (Settings)
+  "regbackup.title": "Registry backup",
+  "regbackup.desc": "Export the registry keys touched by tweaks before making any changes.",
+  "regbackup.create": "Create backup now",
+  "regbackup.open": "Open folder",
+  "regbackup.none": "No backups yet.",
+  "regbackup.created": "Backup created",
+
+  // Hosts
+  "nav.hosts": "Hosts File",
+  "hosts.title": "Hosts File",
+  "hosts.subtitle": "Edit the system hosts file to block domains or redirect DNS locally.",
+  "hosts.add": "Add entry",
+  "hosts.addIp": "IP (e.g. 0.0.0.0)",
+  "hosts.addHost": "Domain (e.g. ads.example.com)",
+  "hosts.addComment": "Comment (optional)",
+  "hosts.reset": "Restore default",
+  "hosts.resetConfirm": "Restore the hosts file to Windows default?",
+  "hosts.blockTelemetry": "Block Microsoft telemetry",
+  "hosts.telemetryAdded": "Microsoft telemetry entries added",
+  "hosts.save": "Save changes",
+  "hosts.saved": "Hosts file saved and DNS flushed",
+  "hosts.noEntries": "The hosts file has no active entries.",
+  "hosts.info": "IPs set to 0.0.0.0 block access to that domain. The browser will not be able to resolve it.",
 };
 
 const dicts: Record<Lang, Dict> = { es, en };

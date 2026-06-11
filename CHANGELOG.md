@@ -4,6 +4,26 @@ Todas las versiones notables de PoxiOptimizer. / All notable versions of PoxiOpt
 
 ---
 
+## [3.0.1] — 2026-06-12
+
+### 🇪🇸 Español
+
+#### ✨ Novedades
+- **🌡️ Temperatura CPU/GPU en el Dashboard**: se consultan los sensores del sistema (WMI + nvidia-smi) y se muestran junto a CPU y GPU con código de color (verde/naranja/rojo). Se actualiza cada 30 segundos automáticamente.
+- **🕐 Historial de acciones**: registro persistente de todo lo que hace la app (ajustes, limpieza, DNS, activación…). Disponible en Ajustes con botón **Deshacer** por entrada (tweaks) y opción de limpiar el historial completo.
+- **📝 Backup del registro**: exporta las ~23 claves de registro que tocan los tweaks a un `.reg` en `Documentos\PoxiOptimizer\backups\`. Disponible en Ajustes.
+- **🌐 Gestor del archivo Hosts**: nueva sección en el menú lateral. Lista estructurada con toggle activo/inactivo, añadir/borrar entradas, preset **Bloquear telemetría de Microsoft** (13 dominios) y restaurar al valor por defecto. Siempre crea `.bak` antes de escribir y flushea el DNS.
+
+### 🇬🇧 English
+
+#### ✨ What's new
+- **🌡️ CPU/GPU temperature in Dashboard**: reads system sensors (WMI + nvidia-smi) and shows them next to CPU and GPU with color coding (green/orange/red). Updates every 30 seconds automatically.
+- **🕐 Action history**: persistent log of everything the app does (tweaks, cleanup, DNS, activation…). Available in Settings with per-entry **Undo** button (tweaks) and a clear-all option.
+- **📝 Registry backup**: exports the ~23 registry keys touched by tweaks to a `.reg` file in `Documents\PoxiOptimizer\backups\`. Available in Settings.
+- **🌐 Hosts file manager**: new sidebar section. Structured list with enable/disable toggle, add/delete entries, **Block Microsoft telemetry** preset (13 domains) and restore to Windows default. Always creates a `.bak` before writing and flushes DNS.
+
+---
+
 ## [3.0.0] — 2026-06-11
 
 ### 🇪🇸 Español

@@ -8,6 +8,7 @@ export function Activate() {
   const t = useT();
   const pushToast = useStore((s) => s.pushToast);
   const loadSystem = useStore((s) => s.loadSystem);
+  const logAction = useStore((s) => s.logAction);
   const act = useStore((s) => s.activation);
   const [working, setWorking] = useState<string | null>(null);
 
@@ -17,7 +18,8 @@ export function Activate() {
     try {
       const msg = await fn();
       pushToast(msg, msg.includes("✅") ? "success" : "info");
-      loadSystem(true); // refresca el estado de activación cacheado
+      loadSystem(true);
+      await logAction({ kind: "activation", label: `Activación ejecutada: ${key}`, can_undo: false });
     } catch (e) {
       pushToast(String(e), "error");
     } finally {

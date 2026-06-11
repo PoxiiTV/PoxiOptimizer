@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Settings as SettingsIcon,
   Github,
@@ -8,6 +8,11 @@ import {
   Download,
   RefreshCw,
   Loader2,
+  ClipboardList,
+  RotateCcw,
+  FolderOpen,
+  HardDrive,
+  type LucideIcon,
 } from "lucide-react";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { Button, Card, PageHeader } from "../components/ui";
@@ -20,10 +25,62 @@ import {
   exportConfig,
   importConfig,
   checkUpdate,
+  getActionLog,
+  clearActionLog,
+  createRegistryBackup,
+  listBackups,
+  openBackupsFolder,
   type UpdateInfo,
+  type LogEntry,
 } from "../lib/tauri";
 
 const REPO = "https://github.com/PoxiiTV/PoxiOptimizer";
+
+const KIND_ICONS: Record<string, LucideIcon> = {
+  tweak_apply: Sparkles,
+  tweak_revert: RotateCcw,
+  cleanup: Sparkles,
+  debloat: Download,
+  dns: Globe,
+  startup: RefreshCw,
+  wupdate: RefreshCw,
+  repair: RefreshCw,
+  activation: Sparkles,
+  hosts: Globe,
+  reg_backup: HardDrive,
+};
+
+function HistoryRow({
+  entry,
+  t,
+  onUndo,
+  undoing,
+}: {
+  entry: LogEntry;
+  t: (k: string) => string;
+  onUndo: () => void;
+  undoing: boolean;
+}) {
+  const Icon = KIND_ICONS[entry.kind] ?? ClipboardList;
+  const date = new Date(entry.timestamp);
+  const fmt = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+  return (
+    <div className="flex items-center gap-2.5 py-1.5 px-1 rounded-lg hover:bg-[var(--color-surface-hover)] group transition-colors">
+      <Icon size={14} className="text-[var(--color-text-dim)] shrink-0" />
+      <span className="text-xs flex-1 truncate">{entry.label}</span>
+      <span className="text-[11px] text-[var(--color-text-dim)] shrink-0 tabular-nums">{fmt}</span>
+      {entry.can_undo && (
+        <button
+          onClick={onUndo}
+          disabled={undoing}
+          className="text-[10px] text-[var(--color-accent)] hover:underline opacity-0 group-hover:opacity-100 transition-opacity shrink-0 disabled:opacity-40"
+        >
+          {undoing ? "…" : t("history.undo")}
+        </button>
+      )}
+    </div>
+  );
+}
 
 export function Settings() {
   const t = useT();
@@ -32,6 +89,15 @@ export function Settings() {
   const pushToast = useStore((s) => s.pushToast);
   const [busy, setBusy] = useState<string | null>(null);
   const [update, setUpdate] = useState<UpdateInfo | null>(null);
+  const [history, setHistory] = useState<LogEntry[]>([]);
+  const [backups, setBackups] = useState<string[]>([]);
+  const [historyLoaded, setHistoryLoaded] = useState(false);
+
+  useEffect(() => {
+    getActionLog().then(setHistory).catch(() => {});
+    listBackups().then(setBackups).catch(() => {});
+    setHistoryLoaded(true);
+  }, []);
 
   const langs: { code: Lang; label: string; flag: string }[] = [
     { code: "es", label: "Español", flag: "ES" },
@@ -68,6 +134,32 @@ export function Settings() {
         }
       }
       pushToast(`${t("settings.imported")} (${n})`, "success");
+    } catch (e) {
+      pushToast(String(e), "error");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const doClearHistory = async () => {
+    setBusy("clearHistory");
+    try {
+      await clearActionLog();
+      setHistory([]);
+    } catch (e) {
+      pushToast(String(e), "error");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const doCreateBackup = async () => {
+    setBusy("backup");
+    try {
+      const path = await createRegistryBackup();
+      pushToast(`${t("regbackup.created")}: ${path.split("\\").pop()}`, "success");
+      const newList = await listBackups();
+      setBackups(newList);
     } catch (e) {
       pushToast(String(e), "error");
     } finally {
@@ -132,7 +224,7 @@ export function Settings() {
       {/* Actualizaciones */}
       <Card className="p-5 mb-4">
         <p className="text-sm font-semibold mb-1">{t("settings.updates")}</p>
-        <p className="text-xs text-[var(--color-text-muted)] mb-3.5">v3.0.0</p>
+        <p className="text-xs text-[var(--color-text-muted)] mb-3.5">v3.0.1</p>
         {update?.update_available ? (
           <div className="glass rounded-xl p-3.5 mb-3 flex items-center gap-3 border-[var(--color-success)]/30">
             <Sparkles size={18} className="text-[var(--color-success)] shrink-0" />
@@ -149,6 +241,80 @@ export function Settings() {
         </Button>
       </Card>
 
+      {/* Backup de registro */}
+      <Card className="p-5 mb-4">
+        <p className="text-sm font-semibold mb-1">{t("regbackup.title")}</p>
+        <p className="text-xs text-[var(--color-text-muted)] mb-3.5">{t("regbackup.desc")}</p>
+        <div className="flex gap-2.5 flex-wrap mb-3">
+          <Button variant="ghost" icon={HardDrive} onClick={doCreateBackup} loading={busy === "backup"}>
+            {t("regbackup.create")}
+          </Button>
+          <Button variant="ghost" icon={FolderOpen} onClick={() => openBackupsFolder().catch(() => {})}>
+            {t("regbackup.open")}
+          </Button>
+        </div>
+        {backups.length > 0 ? (
+          <div className="flex flex-col gap-1">
+            {backups.slice(0, 5).map((b) => (
+              <div key={b} className="text-xs text-[var(--color-text-muted)] flex items-center gap-1.5">
+                <HardDrive size={11} className="shrink-0" />
+                {b}
+              </div>
+            ))}
+            {backups.length > 5 && (
+              <p className="text-xs text-[var(--color-text-dim)]">+{backups.length - 5} más…</p>
+            )}
+          </div>
+        ) : (
+          <p className="text-xs text-[var(--color-text-dim)]">{t("regbackup.none")}</p>
+        )}
+      </Card>
+
+      {/* Historial de acciones */}
+      <Card className="p-5 mb-4">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-sm font-semibold flex items-center gap-2">
+            <ClipboardList size={16} className="text-[var(--color-accent)]" />
+            {t("history.title")}
+          </p>
+          {history.length > 0 && (
+            <Button variant="ghost" icon={busy === "clearHistory" ? Loader2 : RotateCcw} onClick={doClearHistory} loading={busy === "clearHistory"}>
+              {t("history.clear")}
+            </Button>
+          )}
+        </div>
+        {!historyLoaded || history.length === 0 ? (
+          <p className="text-xs text-[var(--color-text-dim)]">{t("history.empty")}</p>
+        ) : (
+          <div className="flex flex-col gap-0.5 max-h-72 overflow-y-auto">
+            {history.slice(0, 100).map((entry) => (
+              <HistoryRow
+                key={entry.id}
+                entry={entry}
+                t={t}
+                onUndo={async () => {
+                  if (!entry.undo_kind || !entry.undo_id) return;
+                  setBusy(`undo-${entry.id}`);
+                  try {
+                    entry.undo_kind === "tweak_apply"
+                      ? await applyTweak(entry.undo_id)
+                      : await revertTweak(entry.undo_id);
+                    pushToast("Deshecho ✅", "success");
+                    const updated = await getActionLog();
+                    setHistory(updated);
+                  } catch (e) {
+                    pushToast(String(e), "error");
+                  } finally {
+                    setBusy(null);
+                  }
+                }}
+                undoing={busy === `undo-${entry.id}`}
+              />
+            ))}
+          </div>
+        )}
+      </Card>
+
       {/* Acerca de */}
       <Card className="p-5">
         <div className="flex items-center gap-3 mb-3">
@@ -158,7 +324,7 @@ export function Settings() {
           <div>
             <p className="font-semibold">
               Poxi<span className="text-gradient">Optimizer</span>{" "}
-              <span className="text-xs text-[var(--color-text-dim)] font-normal">v3.0.0</span>
+              <span className="text-xs text-[var(--color-text-dim)] font-normal">v3.0.1</span>
             </p>
             <p className="text-xs text-[var(--color-text-muted)]">{t("settings.aboutBody")}</p>
           </div>

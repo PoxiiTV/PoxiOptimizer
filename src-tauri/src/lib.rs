@@ -6,11 +6,15 @@ mod apps;
 mod cleanup;
 mod config;
 mod debloat;
+mod history;
+mod hosts;
 mod net;
 mod ps;
+mod regbackup;
 mod repair;
 mod startup;
 mod system;
+mod temps;
 mod tweaks;
 mod uninstall;
 mod update;
@@ -95,6 +99,20 @@ pub fn run() {
             config::import_config,
             // Actualizaciones
             update::check_update,
+            // Historial de acciones
+            history::get_action_log,
+            history::log_action,
+            history::clear_action_log,
+            // Temperaturas
+            temps::get_temperatures,
+            // Backup de registro
+            regbackup::create_registry_backup,
+            regbackup::list_backups,
+            regbackup::open_backups_folder,
+            // Gestor de hosts
+            hosts::get_hosts,
+            hosts::set_hosts,
+            hosts::reset_hosts,
         ])
         .run(tauri::generate_context!())
         .expect("error al ejecutar PoxiOptimizer");

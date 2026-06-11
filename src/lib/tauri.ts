@@ -149,3 +149,34 @@ export const importConfig = () => invoke<string>("import_config");
 
 /* Actualizaciones */
 export const checkUpdate = () => invoke<UpdateInfo>("check_update");
+
+/* Historial de acciones */
+export interface LogEntry {
+  id: string;
+  timestamp: string;
+  kind: string;
+  label: string;
+  can_undo: boolean;
+  undo_kind?: string;
+  undo_id?: string;
+}
+export const getActionLog = () => invoke<LogEntry[]>("get_action_log");
+export const logAction = (entry: LogEntry) => invoke<void>("log_action", { entry });
+export const clearActionLog = () => invoke<void>("clear_action_log");
+
+/* Temperaturas */
+export interface TempInfo {
+  cpu: number | null;
+  gpu: number | null;
+}
+export const getTemperatures = () => invoke<TempInfo>("get_temperatures");
+
+/* Backup de registro */
+export const createRegistryBackup = () => invoke<string>("create_registry_backup");
+export const listBackups = () => invoke<string[]>("list_backups");
+export const openBackupsFolder = () => invoke<void>("open_backups_folder");
+
+/* Hosts */
+export const getHosts = () => invoke<string>("get_hosts");
+export const setHosts = (content: string) => invoke<void>("set_hosts", { content });
+export const resetHosts = () => invoke<void>("reset_hosts");

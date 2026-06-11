@@ -5,8 +5,10 @@ import {
   getActivationStatus,
   isAdmin,
   createRestorePoint,
+  logAction as tauriLogAction,
   type SystemInfo,
   type ActivationStatus,
+  type LogEntry,
 } from "./lib/tauri";
 
 export type View =
@@ -22,6 +24,7 @@ export type View =
   | "network"
   | "wupdate"
   | "activate"
+  | "hosts"
   | "settings";
 
 export interface Toast {
@@ -49,6 +52,8 @@ interface AppState {
   restorePointDone: boolean;
   creatingRestorePoint: boolean;
   ensureRestorePoint: () => Promise<boolean>;
+  // Historial de acciones
+  logAction: (entry: Omit<LogEntry, "id" | "timestamp">) => Promise<void>;
 }
 
 const storedLang = (localStorage.getItem("poxi.lang") as Lang) || "es";
@@ -103,6 +108,18 @@ export const useStore = create<AppState>((set, get) => ({
         "error",
       );
       return false;
+    }
+  },
+  logAction: async (partial) => {
+    const entry: LogEntry = {
+      ...partial,
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      timestamp: new Date().toISOString(),
+    };
+    try {
+      await tauriLogAction(entry);
+    } catch {
+      // El historial no debe romper el flujo principal
     }
   },
 }));

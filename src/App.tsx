@@ -20,6 +20,7 @@ import { Network } from "./views/Network";
 import { WindowsUpdate } from "./views/WindowsUpdate";
 import { Activate } from "./views/Activate";
 import { Settings } from "./views/Settings";
+import { Hosts } from "./views/Hosts";
 
 const VIEWS = {
   dashboard: Dashboard,
@@ -34,6 +35,7 @@ const VIEWS = {
   network: Network,
   wupdate: WindowsUpdate,
   activate: Activate,
+  hosts: Hosts,
   settings: Settings,
 };
 

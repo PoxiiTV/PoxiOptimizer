@@ -7,15 +7,17 @@ import { runSfc, runDism, resetWindowsUpdate } from "../lib/tauri";
 export function Repair() {
   const t = useT();
   const pushToast = useStore((s) => s.pushToast);
+  const logAction = useStore((s) => s.logAction);
   const [working, setWorking] = useState<string | null>(null);
 
-  const run = async (key: string, fn: () => Promise<string>) => {
+  const run = async (key: string, label: string, fn: () => Promise<string>) => {
     if (working) return;
     setWorking(key);
     try {
       pushToast(t("repair.started"), "info");
       const msg = await fn();
       pushToast(msg, "success");
+      await logAction({ kind: "repair", label: `Reparación: ${label}`, can_undo: false });
     } catch (e) {
       pushToast(String(e), "error");
     } finally {
@@ -24,9 +26,9 @@ export function Repair() {
   };
 
   const actions = [
-    { key: "sfc", icon: FileSearch, title: t("repair.sfc"), desc: t("repair.sfcDesc"), fn: runSfc },
-    { key: "dism", icon: ShieldPlus, title: t("repair.dism"), desc: t("repair.dismDesc"), fn: runDism },
-    { key: "wu", icon: RefreshCcw, title: t("repair.wu"), desc: t("repair.wuDesc"), fn: resetWindowsUpdate },
+    { key: "sfc", icon: FileSearch, title: t("repair.sfc"), desc: t("repair.sfcDesc"), fn: runSfc, label: "SFC" },
+    { key: "dism", icon: ShieldPlus, title: t("repair.dism"), desc: t("repair.dismDesc"), fn: runDism, label: "DISM" },
+    { key: "wu", icon: RefreshCcw, title: t("repair.wu"), desc: t("repair.wuDesc"), fn: resetWindowsUpdate, label: "Windows Update reset" },
   ];
 
   return (
@@ -42,7 +44,7 @@ export function Repair() {
         {actions.map((a) => (
           <button
             key={a.key}
-            onClick={() => run(a.key, a.fn)}
+            onClick={() => run(a.key, a.label, a.fn)}
             disabled={working !== null}
             className="glass rounded-2xl p-4 flex items-center gap-4 text-left hover:bg-[var(--color-surface-hover)] transition-colors disabled:opacity-60"
           >

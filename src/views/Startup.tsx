@@ -15,6 +15,7 @@ import { listStartup, setStartup, type StartupItem } from "../lib/tauri";
 export function Startup() {
   const t = useT();
   const pushToast = useStore((s) => s.pushToast);
+  const logAction = useStore((s) => s.logAction);
   const [items, setItems] = useState<StartupItem[]>([]);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -50,6 +51,7 @@ export function Startup() {
     try {
       const msg = await setStartup(item.name, item.location, enable);
       pushToast(msg, "success");
+      await logAction({ kind: "startup", label: `Inicio ${enable ? "activado" : "desactivado"}: ${item.name}`, can_undo: false });
     } catch (e) {
       setItems((prev) =>
         prev.map((x) =>

@@ -7,6 +7,7 @@ import { setDns } from "../lib/tauri";
 export function Network() {
   const t = useT();
   const pushToast = useStore((s) => s.pushToast);
+  const logAction = useStore((s) => s.logAction);
   const [applied, setApplied] = useState<string | null>(null);
   const [working, setWorking] = useState<string | null>(null);
 
@@ -23,6 +24,7 @@ export function Network() {
       const msg = await setDns(id);
       setApplied(id);
       pushToast(msg, "success");
+      await logAction({ kind: "dns", label: `DNS cambiado a: ${id}`, can_undo: false });
     } catch (e) {
       pushToast(String(e), "error");
     } finally {

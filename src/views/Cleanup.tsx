@@ -30,6 +30,7 @@ export function Cleanup() {
   const t = useT();
   const pushToast = useStore((s) => s.pushToast);
   const ensureRestorePoint = useStore((s) => s.ensureRestorePoint);
+  const logAction = useStore((s) => s.logAction);
   const [opts, setOpts] = useState<Record<Key, boolean>>({
     temp: true,
     update_cache: true,
@@ -65,6 +66,7 @@ export function Cleanup() {
       const res = await runCleanup(selected);
       setFreed(res.freed_mb);
       pushToast(`${t("cleanup.freed")}: ${res.freed_mb} MB`, "success");
+      await logAction({ kind: "cleanup", label: `Limpieza completada — ${res.freed_mb} MB liberados`, can_undo: false });
     } catch (e) {
       pushToast(String(e), "error");
     } finally {

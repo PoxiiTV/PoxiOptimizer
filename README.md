@@ -37,7 +37,8 @@
 | ⬇️ **Instalar apps** | Catálogo de +50 programas + **buscador winget en vivo**. |
 | 📦 **Desinstalador** | Lista **todos** los programas y los desinstala en lote. |
 | 🔑 **Activación** | Activa Windows (HWID) y Office (Ohook) vía **MAS**, con resultado en español. |
-| 💾 **Configuración** | **Exportar/importar** tus ajustes y **comprobar actualizaciones**. |
+| 🌐 **Hosts** | Gestor del archivo hosts del sistema. Bloquea rastreadores, telemetría de Microsoft y más con un clic. |
+| 💾 **Configuración** | **Exportar/importar** ajustes, **historial de acciones** con deshacer, **backup del registro** y comprobar actualizaciones. |
 
 ### 🛡️ Seguridad ante todo
 
@@ -49,7 +50,7 @@
 
 ### 🚀 Instalación
 
-1. Descarga el instalador `PoxiOptimizer_3.0.0_x64-setup.exe` desde la pestaña [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases).
+1. Descarga el instalador `PoxiOptimizer_3.0.1_x64-setup.exe` desde la pestaña [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases).
 2. Ejecútalo y sigue el asistente.
 3. Abre **PoxiOptimizer** y acepta el aviso de administrador.
 
@@ -87,7 +88,8 @@ npm run tauri build    # genera el instalador en src-tauri/target/release/bundle
 | ⬇️ **Install apps** | Catalog of 50+ programs + **live winget search**. |
 | 📦 **Uninstaller** | Lists **every** program and removes them in batch. |
 | 🔑 **Activation** | Activates Windows (HWID) and Office (Ohook) via **MAS**, with result in Spanish. |
-| 💾 **Configuration** | **Export/import** your tweaks and **check for updates**. |
+| 🌐 **Hosts** | System hosts file manager. Block trackers, Microsoft telemetry and more in one click. |
+| 💾 **Configuration** | **Export/import** tweaks, **action history** with undo, **registry backup** and update check. |
 
 ### 🛡️ Safety first
 
@@ -99,7 +101,7 @@ npm run tauri build    # genera el instalador en src-tauri/target/release/bundle
 
 ### 🚀 Installation
 
-1. Download `PoxiOptimizer_3.0.0_x64-setup.exe` from the [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases) tab.
+1. Download `PoxiOptimizer_3.0.1_x64-setup.exe` from the [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases) tab.
 2. Run it and follow the wizard.
 3. Open **PoxiOptimizer** and accept the administrator prompt.
 
