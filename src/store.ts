@@ -5,6 +5,7 @@ import {
   getActivationStatus,
   isAdmin,
   createRestorePoint,
+  createRegistryBackup,
   logAction as tauriLogAction,
   type SystemInfo,
   type ActivationStatus,
@@ -48,9 +49,10 @@ interface AppState {
   pushToast: (message: string, type?: Toast["type"]) => void;
   dismissToast: (id: number) => void;
   loadSystem: (force?: boolean) => void;
-  // Punto de restauración (seguridad antes de optimizar/limpiar)
+  // Punto de restauración + backup de registro (seguridad antes de optimizar/limpiar)
   restorePointDone: boolean;
-  creatingRestorePoint: boolean;
+  registryBackupDone: boolean;
+  prepareStep: "restore" | "backup" | null;
   ensureRestorePoint: () => Promise<boolean>;
   // Historial de acciones
   logAction: (entry: Omit<LogEntry, "id" | "timestamp">) => Promise<void>;
@@ -91,24 +93,53 @@ export const useStore = create<AppState>((set, get) => ({
     getActivationStatus().then((a) => set({ activation: a })).catch(() => {});
   },
   restorePointDone: false,
-  creatingRestorePoint: false,
+  registryBackupDone: false,
+  prepareStep: null,
   ensureRestorePoint: async () => {
-    if (get().restorePointDone) return true;
-    set({ creatingRestorePoint: true });
-    try {
-      await createRestorePoint("PoxiOptimizer - antes de optimizar");
-      set({ restorePointDone: true, creatingRestorePoint: false });
-      get().pushToast("Punto de restauración creado ✅", "success");
-      return true;
-    } catch {
-      // No bloqueamos el uso si System Restore no está disponible, pero avisamos.
-      set({ restorePointDone: true, creatingRestorePoint: false });
-      get().pushToast(
-        "No se pudo crear el punto de restauración (System Restore puede estar desactivado). Continúa con cuidado.",
-        "error",
-      );
-      return false;
+    if (get().restorePointDone && get().registryBackupDone) return true;
+
+    // — Paso 1: Punto de restauración —
+    if (!get().restorePointDone) {
+      set({ prepareStep: "restore" });
+      try {
+        await createRestorePoint("PoxiOptimizer - antes de optimizar");
+        set({ restorePointDone: true });
+        get().pushToast("Punto de restauración creado ✅", "success");
+      } catch {
+        set({ restorePointDone: true });
+        get().pushToast(
+          "No se pudo crear el punto de restauración (System Restore puede estar desactivado). Continúa con cuidado.",
+          "error",
+        );
+      }
     }
+
+    // — Paso 2: Backup del registro —
+    if (!get().registryBackupDone) {
+      set({ prepareStep: "backup" });
+      try {
+        const path = await createRegistryBackup();
+        const filename = path.split("\\").pop() ?? path;
+        set({ registryBackupDone: true });
+        get().pushToast(`Backup del registro guardado: ${filename} ✅`, "success");
+        await tauriLogAction({
+          id: `${Date.now()}-regbak`,
+          timestamp: new Date().toISOString(),
+          kind: "reg_backup",
+          label: `Backup del registro creado: ${filename}`,
+          can_undo: false,
+        });
+      } catch {
+        set({ registryBackupDone: true });
+        get().pushToast(
+          "No se pudo crear el backup del registro. Continúa con precaución.",
+          "error",
+        );
+      }
+    }
+
+    set({ prepareStep: null });
+    return true;
   },
   logAction: async (partial) => {
     const entry: LogEntry = {

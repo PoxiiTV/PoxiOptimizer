@@ -4,6 +4,20 @@ Todas las versiones notables de PoxiOptimizer. / All notable versions of PoxiOpt
 
 ---
 
+## [3.0.2] — 2026-06-12
+
+### 🇪🇸 Español
+
+#### ⚡ Mejoras de seguridad
+- **Doble seguridad obligatoria antes de optimizar**: ahora, antes de aplicar cualquier tweak o limpieza, la app crea **automáticamente** tanto el punto de restauración como el backup del registro. Las dos medidas se ejecutan en secuencia con un overlay visual que muestra el paso activo. No se puede saltarse ninguna.
+
+### 🇬🇧 English
+
+#### ⚡ Security improvements
+- **Mandatory dual safety before optimizing**: before applying any tweak or cleanup, the app now **automatically** creates both the restore point and the registry backup. Both run sequentially with a visual overlay showing the active step. Neither can be skipped.
+
+---
+
 ## [3.0.1] — 2026-06-12
 
 ### 🇪🇸 Español
