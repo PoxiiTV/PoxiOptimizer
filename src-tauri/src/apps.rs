@@ -92,37 +92,53 @@ fn is_winget_available() -> bool {
     )
 }
 
-/// Intenta instalar winget (App Installer) si no esta disponible.
-/// En Windows 11 Home/Pro suele estar preinstalado; en ediciones LTSC/IoT puede faltar.
+/// Instala winget (App Installer) descargando las dependencias y el bundle
+/// directamente desde Microsoft/GitHub sin necesitar la Microsoft Store.
+/// Funciona en todas las ediciones de Windows 11 y 10 incluyendo LTSC/IoT.
 #[tauri::command(async)]
 pub fn ensure_winget() -> Result<String, String> {
     if is_winget_available() {
         return Ok("winget ya está disponible".to_string());
     }
+    // Instalamos en orden: VCLibs → UIXaml → winget bundle.
+    // Add-AppxPackage <archivo> no requiere la Microsoft Store; instala
+    // directamente desde el fichero descargado, como un instalador .exe normal.
     let script = r#"
-        $ErrorActionPreference = 'SilentlyContinue'
         $progressPreference = 'SilentlyContinue'
+        $ErrorActionPreference = 'SilentlyContinue'
+        $tmp = $env:TEMP
+
+        # 1. VCLibs (URL directa de Microsoft, siempre disponible)
+        $vcPath = Join-Path $tmp 'poxi_vclibs.appx'
+        Invoke-WebRequest 'https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop' -OutFile $vcPath -TimeoutSec 30
+        if (Test-Path $vcPath) { Add-AppxPackage $vcPath -ErrorAction SilentlyContinue }
+
+        # 2. UIXaml + bundle desde la release mas reciente de winget en GitHub
         try {
-            Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe
+            $rel = Invoke-RestMethod 'https://api.github.com/repos/microsoft/winget-cli/releases/latest' -TimeoutSec 20
+
+            $xamlAsset = $rel.assets | Where-Object { $_.name -match 'Microsoft\.UI\.Xaml.*x64.*\.appx$' } | Select-Object -First 1
+            if ($xamlAsset) {
+                $xamlPath = Join-Path $tmp 'poxi_uixaml.appx'
+                Invoke-WebRequest $xamlAsset.browser_download_url -OutFile $xamlPath -TimeoutSec 60
+                if (Test-Path $xamlPath) { Add-AppxPackage $xamlPath -ErrorAction SilentlyContinue }
+            }
+
+            $bundleAsset = $rel.assets | Where-Object { $_.name -like '*.msixbundle' } | Select-Object -First 1
+            if ($bundleAsset) {
+                $bundlePath = Join-Path $tmp 'poxi_winget.msixbundle'
+                Invoke-WebRequest $bundleAsset.browser_download_url -OutFile $bundlePath -TimeoutSec 120
+                if (Test-Path $bundlePath) { Add-AppxPackage $bundlePath -ErrorAction SilentlyContinue }
+            }
         } catch {}
-        if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-            try {
-                $api = Invoke-RestMethod 'https://api.github.com/repos/microsoft/winget-cli/releases/latest' -TimeoutSec 15
-                $bundle = $api.assets | Where-Object { $_.name -like '*.msixbundle' } | Select-Object -First 1
-                if ($bundle) {
-                    $tmp = Join-Path $env:TEMP 'winget_installer.msixbundle'
-                    Invoke-WebRequest $bundle.browser_download_url -OutFile $tmp -TimeoutSec 60
-                    Add-AppxPackage $tmp
-                }
-            } catch {}
-        }
-        Start-Sleep -Seconds 2
+
+        Start-Sleep -Seconds 3
     "#;
     ps::run_powershell(script).ok();
     if is_winget_available() {
-        Ok("winget instalado correctamente".to_string())
+        Ok("winget instalado correctamente. ✅".to_string())
     } else {
-        Err("winget no disponible. Instala 'App Installer' desde la Microsoft Store para poder instalar aplicaciones automáticamente.".to_string())
+        Err("No se pudo instalar winget automáticamente. Es posible que necesites reiniciar el PC para que los cambios surtan efecto, o instalar manualmente 'App Installer' desde la Microsoft Store.".to_string())
     }
 }
 
