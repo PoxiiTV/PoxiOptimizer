@@ -4,6 +4,40 @@ Todas las versiones notables de PoxiOptimizer. / All notable versions of PoxiOpt
 
 ---
 
+## [3.0.0] — 2026-06-11
+
+### 🇪🇸 Español
+
+#### ✨ Novedades
+- **🪄 Modo Post-Formateo**: deja tu PC perfecto justo después de formatear con un solo asistente. Optimización gaming al máximo, configurado al gusto de Poxi. En orden hace:
+  1. Crea un punto de restauración `PostFormateo`.
+  2. Quita **todo** el bloatware (manteniendo Microsoft Store y la app Xbox; sin tocar Edge, Bloc de notas ni componentes esenciales).
+  3. Aplica el perfil de optimización **Gaming**.
+  4. Instala las apps esenciales (Chrome, Discord, WhatsApp, Telegram, Spotify, VLC, Everything, WinRAR, PowerToys, Python 3.12, Java, Node.js, Steam, Epic Games, Malwarebytes).
+  5. Pone **Chrome como predeterminado**.
+  6. Configura **DNS de Google**.
+  7. **Activa Windows**.
+  8. Pone **Windows Update en solo seguridad**.
+  9. **Desactiva todos los programas de inicio**.
+- Pantalla explicativa previa + ejecución con **progreso animado paso a paso** (timeline) y pantalla de éxito.
+
+### 🇬🇧 English
+
+#### ✨ What's new
+- **🪄 Post-Format mode**: get your PC perfect right after a clean install with a single wizard (max gaming optimization, set up the way Poxi likes it):
+  1. Creates a `PostFormateo` restore point.
+  2. Removes **all** bloatware (keeping Microsoft Store and the Xbox app; leaving Edge, Notepad and essential components untouched).
+  3. Applies the **Gaming** optimization profile.
+  4. Installs essential apps (Chrome, Discord, WhatsApp, Telegram, Spotify, VLC, Everything, WinRAR, PowerToys, Python 3.12, Java, Node.js, Steam, Epic Games, Malwarebytes).
+  5. Sets **Chrome as default**.
+  6. Sets **Google DNS**.
+  7. **Activates Windows**.
+  8. Sets **Windows Update to security-only**.
+  9. **Disables all startup programs**.
+- Pre-run explainer + **animated step-by-step progress** (timeline) and a success screen.
+
+---
+
 ## [2.0.0] — 2026-06-11
 
 ### 🇪🇸 Español

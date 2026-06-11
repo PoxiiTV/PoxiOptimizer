@@ -8,6 +8,7 @@ import { Onboarding } from "./components/Onboarding";
 import { useStore } from "./store";
 
 import { Dashboard } from "./views/Dashboard";
+import { PostFormat } from "./views/PostFormat";
 import { Optimize } from "./views/Optimize";
 import { Debloat } from "./views/Debloat";
 import { Install } from "./views/Install";
@@ -22,6 +23,7 @@ import { Settings } from "./views/Settings";
 
 const VIEWS = {
   dashboard: Dashboard,
+  postformat: PostFormat,
   optimize: Optimize,
   debloat: Debloat,
   install: Install,

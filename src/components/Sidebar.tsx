@@ -11,6 +11,7 @@ import {
   Settings,
   Wrench,
   Rocket,
+  Wand2,
   Network as NetIcon,
   type LucideIcon,
 } from "lucide-react";
@@ -27,6 +28,7 @@ const GROUPS: { titleKey: string; items: Item[] }[] = [
     titleKey: "nav.group.system",
     items: [
       { view: "dashboard", icon: Home, labelKey: "nav.dashboard" },
+      { view: "postformat", icon: Wand2, labelKey: "nav.postformat" },
       { view: "optimize", icon: Gauge, labelKey: "nav.optimize" },
       { view: "cleanup", icon: Sparkles, labelKey: "nav.cleanup" },
       { view: "repair", icon: Wrench, labelKey: "nav.repair" },

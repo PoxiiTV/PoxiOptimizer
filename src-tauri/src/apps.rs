@@ -119,3 +119,28 @@ pub fn install_app(winget_id: String) -> Result<String, String> {
         Err(format!("No se pudo instalar {winget_id}: {detail}"))
     }
 }
+
+/// [POST-FORMATEO] Intenta poner Chrome como navegador predeterminado.
+/// Windows 10/11 protege esta opción (hash UserChoice), así que lanzamos Chrome
+/// con --make-default-browser, que abre la confirmación nativa de Windows.
+#[tauri::command(async)]
+pub fn set_chrome_default() -> Result<String, String> {
+    let script = r#"
+$paths = @(
+  "$env:ProgramFiles\Google\Chrome\Application\chrome.exe",
+  "${env:ProgramFiles(x86)}\Google\Chrome\Application\chrome.exe",
+  "$env:LOCALAPPDATA\Google\Chrome\Application\chrome.exe"
+)
+$chrome = $paths | Where-Object { Test-Path $_ } | Select-Object -First 1
+if ($chrome) {
+  Start-Process $chrome -ArgumentList '--make-default-browser'
+  'OK'
+} else { 'NOT_FOUND' }
+"#;
+    let out = ps::ps_capture(script)?;
+    if out.trim() == "OK" {
+        Ok("Se ha abierto Chrome para confirmarlo como predeterminado".to_string())
+    } else {
+        Err("Chrome aún no está instalado".to_string())
+    }
+}

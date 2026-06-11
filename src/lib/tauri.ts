@@ -98,6 +98,7 @@ export const checkAllTweaks = () =>
 export const listAppx = () => invoke<AppxItem[]>("list_appx");
 export const removeAppx = (name: string) =>
   invoke<string>("remove_appx", { name });
+export const postformatDebloat = () => invoke<string[]>("postformat_debloat");
 
 /* Apps (winget) */
 export const wingetAvailable = () => invoke<boolean>("winget_available");
@@ -105,6 +106,7 @@ export const installApp = (wingetId: string) =>
   invoke<string>("install_app", { wingetId });
 export const wingetSearch = (query: string) =>
   invoke<WingetResult[]>("winget_search", { query });
+export const setChromeDefault = () => invoke<string>("set_chrome_default");
 
 /* Desinstalador */
 export const listPrograms = () => invoke<Program[]>("list_programs");
@@ -135,6 +137,7 @@ export const resetWindowsUpdate = () => invoke<string>("reset_windows_update");
 export const listStartup = () => invoke<StartupItem[]>("list_startup");
 export const setStartup = (name: string, location: string, enable: boolean) =>
   invoke<string>("set_startup", { name, location, enable });
+export const disableAllStartup = () => invoke<number>("disable_all_startup");
 
 /* Red / DNS */
 export const setDns = (provider: string) => invoke<string>("set_dns", { provider });

@@ -62,10 +62,12 @@ pub fn run() {
             // Debloat
             debloat::list_appx,
             debloat::remove_appx,
+            debloat::postformat_debloat,
             // Apps (winget)
             apps::winget_available,
             apps::install_app,
             apps::winget_search,
+            apps::set_chrome_default,
             // Desinstalador
             uninstall::list_programs,
             uninstall::uninstall_program,
@@ -85,6 +87,7 @@ pub fn run() {
             // Gestor de inicio
             startup::list_startup,
             startup::set_startup,
+            startup::disable_all_startup,
             // Red / DNS
             net::set_dns,
             // Configuración (exportar / importar)

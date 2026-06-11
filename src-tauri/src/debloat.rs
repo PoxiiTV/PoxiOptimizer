@@ -211,3 +211,46 @@ Get-AppxProvisionedPackage -Online | Where-Object {{ $_.DisplayName -eq '{n}' }}
     );
     ps::ps_capture(&script).map(|_| format!("Eliminado: {}", friendly(&name)))
 }
+
+/// Paquetes que el modo Post-Formateo MANTIENE aunque sean "bloatware":
+/// la app de Xbox y el proveedor de identidad (necesario para juegos / Game Pass).
+const POSTFORMAT_KEEP: &[&str] = &["Microsoft.GamingApp", "Microsoft.XboxIdentityProvider"];
+
+/// [POST-FORMATEO] Quita de golpe todo el bloatware conocido excepto la lista
+/// que se desea conservar (Xbox). La Microsoft Store, Edge, Bloc de notas y los
+/// componentes esenciales NO se tocan porque no están en la lista de bloatware.
+/// Devuelve los nombres de los paquetes eliminados.
+#[tauri::command(async)]
+pub fn postformat_debloat() -> Result<Vec<String>, String> {
+    let names: Vec<&str> = BLOAT
+        .iter()
+        .filter(|n| !POSTFORMAT_KEEP.contains(n))
+        .copied()
+        .collect();
+    let list = names.join("','");
+    let script = format!(
+        r#"
+$ErrorActionPreference='SilentlyContinue'
+$names = @('{list}')
+$removed = @()
+foreach ($n in $names) {{
+  $pkg = Get-AppxPackage -Name $n
+  if ($pkg) {{
+    $pkg | Remove-AppxPackage -ErrorAction SilentlyContinue
+    Get-AppxProvisionedPackage -Online | Where-Object {{ $_.DisplayName -eq $n }} | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | Out-Null
+    $removed += $n
+  }}
+}}
+$removed -join ','
+"#,
+        list = list
+    );
+    let out = ps::ps_capture(&script)?;
+    let removed: Vec<String> = out
+        .split(',')
+        .map(|s| s.trim())
+        .filter(|s| !s.is_empty())
+        .map(friendly)
+        .collect();
+    Ok(removed)
+}

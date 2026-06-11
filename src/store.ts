@@ -11,6 +11,7 @@ import {
 
 export type View =
   | "dashboard"
+  | "postformat"
   | "optimize"
   | "debloat"
   | "install"

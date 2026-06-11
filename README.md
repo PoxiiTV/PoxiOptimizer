@@ -25,6 +25,7 @@
 
 | Módulo | Qué hace |
 |--------|----------|
+| 🪄 **Post-Formateo** | **¡Un clic para dejar tu PC perfecto tras formatear!** Punto de restauración → quita bloatware → perfil Gaming → instala tus apps → Chrome predeterminado → DNS de Google → activa Windows → Update solo seguridad → desactiva el inicio. Con progreso animado paso a paso. |
 | 🏠 **Inicio** | Panel con info del sistema (CPU, GPU, RAM, disco), estado de activación y acciones rápidas. |
 | ⚙️ **Optimización** | +30 *tweaks* **seguros y reversibles** + **perfiles 1 clic** (Recomendado, Gaming, Privacidad) + sección **Avanzado (bajo tu riesgo)**. |
 | ✨ **Limpieza** | Temporales, caché de Update y navegadores, miniaturas, logs, cola de impresión, papelera, DNS y **WinSxS** (DISM). |
@@ -48,7 +49,7 @@
 
 ### 🚀 Instalación
 
-1. Descarga el instalador `PoxiOptimizer_2.0.0_x64-setup.exe` desde la pestaña [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases).
+1. Descarga el instalador `PoxiOptimizer_3.0.0_x64-setup.exe` desde la pestaña [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases).
 2. Ejecútalo y sigue el asistente.
 3. Abre **PoxiOptimizer** y acepta el aviso de administrador.
 
@@ -74,6 +75,7 @@ npm run tauri build    # genera el instalador en src-tauri/target/release/bundle
 
 | Module | What it does |
 |--------|--------------|
+| 🪄 **Post-Format** | **One click to get your PC perfect after a fresh install!** Restore point → remove bloatware → Gaming profile → install your apps → Chrome default → Google DNS → activate Windows → security-only Update → disable startup. With animated step-by-step progress. |
 | 🏠 **Home** | Dashboard with system info (CPU, GPU, RAM, disk), activation status and quick actions. |
 | ⚙️ **Optimization** | 30+ **safe, reversible tweaks** + **1-click profiles** (Recommended, Gaming, Privacy) + **Advanced (at your own risk)** section. |
 | ✨ **Cleanup** | Temp files, Update & browser cache, thumbnails, logs, print queue, recycle bin, DNS and **WinSxS** (DISM). |
@@ -97,7 +99,7 @@ npm run tauri build    # genera el instalador en src-tauri/target/release/bundle
 
 ### 🚀 Installation
 
-1. Download `PoxiOptimizer_2.0.0_x64-setup.exe` from the [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases) tab.
+1. Download `PoxiOptimizer_3.0.0_x64-setup.exe` from the [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases) tab.
 2. Run it and follow the wizard.
 3. Open **PoxiOptimizer** and accept the administrator prompt.
 

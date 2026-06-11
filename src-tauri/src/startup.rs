@@ -97,3 +97,31 @@ Set-ItemProperty -Path $approved -Name '{name}' -Value ([byte[]]({bytes})) -Type
         }
     })
 }
+
+/// [POST-FORMATEO] Deshabilita TODOS los programas de inicio (HKCU y HKLM).
+/// Devuelve cuántos se han desactivado.
+#[tauri::command(async)]
+pub fn disable_all_startup() -> Result<usize, String> {
+    let script = r#"
+$ErrorActionPreference='SilentlyContinue'
+$count = 0
+$sources = @(
+  @{ run='HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'; appr='HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run' },
+  @{ run='HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'; appr='HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run' }
+)
+foreach ($s in $sources) {
+  $key = Get-Item -Path $s.run -ErrorAction SilentlyContinue
+  if ($key) {
+    if (-not (Test-Path $s.appr)) { New-Item -Path $s.appr -Force | Out-Null }
+    foreach ($n in $key.GetValueNames()) {
+      if ([string]::IsNullOrWhiteSpace($n)) { continue }
+      Set-ItemProperty -Path $s.appr -Name $n -Value ([byte[]](3,0,0,0,0,0,0,0,0,0,0,0)) -Type Binary
+      $count++
+    }
+  }
+}
+$count
+"#;
+    let out = ps::ps_capture(script)?;
+    Ok(out.trim().parse::<usize>().unwrap_or(0))
+}
