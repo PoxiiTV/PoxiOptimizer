@@ -14,6 +14,7 @@ import {
   Wand2,
   Globe,
   Network as NetIcon,
+  Cpu,
   type LucideIcon,
 } from "lucide-react";
 import { useStore, useT, type View } from "../store";
@@ -52,6 +53,13 @@ const GROUPS: { titleKey: string; items: Item[] }[] = [
       { view: "activate", icon: KeyRound, labelKey: "nav.activate" },
       { view: "hosts", icon: Globe, labelKey: "nav.hosts" },
       { view: "settings", icon: Settings, labelKey: "nav.settings" },
+    ],
+  },
+  {
+    titleKey: "nav.group.advanced",
+    items: [
+      { view: "wintools", icon: Wrench, labelKey: "nav.wintools" },
+      { view: "winfeatures", icon: Cpu, labelKey: "nav.winfeatures" },
     ],
   },
 ];

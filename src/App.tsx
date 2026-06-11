@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { TitleBar } from "./components/TitleBar";
 import { Sidebar } from "./components/Sidebar";
 import { Toasts } from "./components/Toasts";
@@ -21,6 +22,8 @@ import { WindowsUpdate } from "./views/WindowsUpdate";
 import { Activate } from "./views/Activate";
 import { Settings } from "./views/Settings";
 import { Hosts } from "./views/Hosts";
+import { WindowsTools } from "./views/WindowsTools";
+import { WindowsFeatures } from "./views/WindowsFeatures";
 
 const VIEWS = {
   dashboard: Dashboard,
@@ -36,6 +39,8 @@ const VIEWS = {
   wupdate: WindowsUpdate,
   activate: Activate,
   hosts: Hosts,
+  wintools: WindowsTools,
+  winfeatures: WindowsFeatures,
   settings: Settings,
 };
 
@@ -43,10 +48,29 @@ export default function App() {
   const view = useStore((s) => s.view);
   const loadSystem = useStore((s) => s.loadSystem);
   const ViewComponent = VIEWS[view];
+  const mainRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     loadSystem();
   }, [loadSystem]);
+
+  // Vuelve al inicio del scroll siempre que cambie la vista
+  useEffect(() => {
+    mainRef.current?.scrollTo({ top: 0, behavior: "instant" });
+  }, [view]);
+
+  // Detecta maximizado y añade/quita clase para eliminar border-radius
+  useEffect(() => {
+    const win = getCurrentWindow();
+    const syncMaximized = async () => {
+      const maximized = await win.isMaximized();
+      document.documentElement.classList.toggle("maximized", maximized);
+    };
+    syncMaximized();
+    let unlisten: (() => void) | undefined;
+    win.onResized(() => syncMaximized()).then((fn) => { unlisten = fn; });
+    return () => { unlisten?.(); };
+  }, []);
 
   return (
     <div className="relative h-full w-full flex flex-col text-[var(--color-text)] overflow-hidden">
@@ -83,7 +107,7 @@ export default function App() {
 
       <div className="flex flex-1 min-h-0">
         <Sidebar />
-        <main className="flex-1 min-w-0 overflow-y-auto">
+        <main ref={mainRef} className="flex-1 min-w-0 overflow-y-auto">
           <AnimatePresence mode="wait">
             <motion.div
               key={view}

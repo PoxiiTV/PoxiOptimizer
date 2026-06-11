@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Globe, Plus, Trash2, Shield, RotateCcw, Save, Info, Loader2 } from "lucide-react";
-import { Badge, Button, Card, PageHeader } from "../components/ui";
+import { Badge, Button, Card, PageHeader, Toggle } from "../components/ui";
 import { useStore, useT } from "../store";
 import { getHosts, setHosts, resetHosts } from "../lib/tauri";
 
@@ -277,7 +277,7 @@ export function Hosts() {
       ) : (
         <Card className="overflow-hidden">
           {/* Cabecera */}
-          <div className="grid grid-cols-[40px_110px_1fr_1fr_40px] gap-2 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-dim)] border-b border-[var(--color-border)]">
+          <div className="grid grid-cols-[52px_110px_1fr_1fr_40px] gap-2 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-dim)] border-b border-[var(--color-border)]">
             <span></span>
             <span>IP</span>
             <span>Dominio</span>
@@ -293,25 +293,17 @@ export function Hosts() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 8, height: 0 }}
                   transition={{ duration: 0.15 }}
-                  className={`grid grid-cols-[40px_110px_1fr_1fr_40px] gap-2 px-4 py-3 items-center transition-colors ${
+                  className={`grid grid-cols-[52px_110px_1fr_1fr_40px] gap-2 px-4 py-3 items-center transition-colors ${
                     entry.enabled
                       ? "hover:bg-[var(--color-surface-hover)]"
                       : "opacity-50 hover:opacity-70"
                   }`}
                 >
                   {/* Toggle */}
-                  <button
-                    onClick={() => toggleEntry(entry.id)}
-                    className={`w-8 h-5 rounded-full transition-all relative shrink-0 ${
-                      entry.enabled ? "accent-gradient" : "bg-[var(--color-surface)]"
-                    }`}
-                  >
-                    <span
-                      className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${
-                        entry.enabled ? "translate-x-3" : "translate-x-0.5"
-                      }`}
-                    />
-                  </button>
+                  <Toggle
+                    checked={entry.enabled}
+                    onChange={() => toggleEntry(entry.id)}
+                  />
 
                   <span className="text-xs font-mono text-[var(--color-text-muted)] truncate">{entry.ip}</span>
                   <span className="text-sm font-medium truncate">{entry.hostname}</span>
@@ -320,7 +312,7 @@ export function Hosts() {
                   {/* Borrar */}
                   <button
                     onClick={() => deleteEntry(entry.id)}
-                    className="text-[var(--color-text-dim)] hover:text-[var(--color-danger)] transition-colors p-1 rounded-lg hover:bg-[var(--color-danger)]/10"
+                    className="text-[var(--color-text-dim)] hover:text-[var(--color-danger)] transition-colors p-1 rounded-lg hover:bg-[var(--color-danger)]/10 cursor-pointer"
                   >
                     <Trash2 size={14} />
                   </button>

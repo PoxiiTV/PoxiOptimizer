@@ -489,6 +489,332 @@ $set = $all | Where-Object { (Get-ItemProperty -Path $_.PSPath -Name 'TcpAckFreq
                 reg(r"HKLM:\SOFTWARE\Policies\Microsoft\Dsh", "AllowNewsAndInterests", RegKind::Dword, "0", Some("1")),
             ]),
         },
+        // ----------------------- PRIVACIDAD (nuevos) -----------------------
+        Tweak {
+            id: "consumer-features",
+            category: "Privacidad",
+            title: "Desactivar instalación automática de apps sugeridas",
+            description: "Impide que Windows instale apps de la Store en segundo plano sin pedirte permiso (Consumer Features).",
+            recommended: true,
+            action: Action::Registry(vec![
+                reg(r"HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent", "DisableWindowsConsumerFeatures", RegKind::Dword, "1", None),
+            ]),
+        },
+        Tweak {
+            id: "delivery-optimization",
+            category: "Privacidad",
+            title: "Desactivar Optimización de entrega (P2P de actualizaciones)",
+            description: "Evita que Windows comparta actualizaciones con otros PCs de Internet usando tu ancho de banda.",
+            recommended: true,
+            action: Action::Registry(vec![
+                reg(r"HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization", "DODownloadMode", RegKind::Dword, "0", None),
+            ]),
+        },
+        Tweak {
+            id: "windows-ai",
+            category: "Privacidad",
+            title: "Desactivar Windows AI (Copilot y Recall)",
+            description: "Desactiva el botón de Copilot, el servicio de IA y la función Recall. Ahorra RAM y mejora la privacidad.",
+            recommended: true,
+            action: Action::Script {
+                apply: r#"
+if (-not (Test-Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsCopilot')) { New-Item -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsCopilot' -Force | Out-Null }
+New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsCopilot' -Name 'TurnOffWindowsCopilot' -Value 1 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'ShowCopilotButton' -Value 0 -PropertyType DWord -Force | Out-Null
+if (-not (Test-Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsAI')) { New-Item -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsAI' -Force | Out-Null }
+New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsAI' -Name 'DisableAIDataAnalysis' -Value 1 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsAI' -Name 'AllowRecallEnablement' -Value 0 -PropertyType DWord -Force | Out-Null
+Set-Service -Name 'WSAIFabricSvc' -StartupType Disabled -ErrorAction SilentlyContinue
+Stop-Service -Name 'WSAIFabricSvc' -Force -ErrorAction SilentlyContinue
+"#,
+                revert: r#"
+Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsCopilot' -Name 'TurnOffWindowsCopilot' -ErrorAction SilentlyContinue
+Remove-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'ShowCopilotButton' -ErrorAction SilentlyContinue
+Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsAI' -Name 'DisableAIDataAnalysis' -ErrorAction SilentlyContinue
+Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsAI' -Name 'AllowRecallEnablement' -ErrorAction SilentlyContinue
+Set-Service -Name 'WSAIFabricSvc' -StartupType Automatic -ErrorAction SilentlyContinue
+"#,
+                check: "((Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsCopilot' -Name 'TurnOffWindowsCopilot' -ErrorAction SilentlyContinue).'TurnOffWindowsCopilot' -eq 1)",
+            },
+        },
+        Tweak {
+            id: "powershell-telemetry",
+            category: "Privacidad",
+            title: "Desactivar telemetría de PowerShell 7",
+            description: "Establece la variable de entorno del sistema para que PowerShell 7 no envíe datos de uso a Microsoft.",
+            recommended: true,
+            action: Action::Registry(vec![
+                reg(r"HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment", "POWERSHELL_TELEMETRY_OPTOUT", RegKind::Sz, "1", None),
+            ]),
+        },
+        Tweak {
+            id: "start-recommendations",
+            category: "Privacidad",
+            title: "Quitar sección Recomendado del menú Inicio",
+            description: "Oculta los archivos y apps recomendados del menú Inicio de Windows 11.",
+            recommended: true,
+            action: Action::Registry(vec![
+                reg(r"HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer", "HideRecommendedSection", RegKind::Dword, "1", None),
+            ]),
+        },
+        Tweak {
+            id: "cortana",
+            category: "Privacidad",
+            title: "Desactivar Cortana",
+            description: "Deshabilita el asistente Cortana y su búsqueda web integrada.",
+            recommended: true,
+            action: Action::Registry(vec![
+                reg(r"HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search", "AllowCortana", RegKind::Dword, "0", None),
+                reg(r"HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search", "DisableWebSearch", RegKind::Dword, "1", None),
+            ]),
+        },
+        // ----------------------- RENDIMIENTO (nuevos) -----------------------
+        Tweak {
+            id: "fullscreen-optimizations",
+            category: "Rendimiento",
+            title: "Desactivar optimizaciones de pantalla completa (FSO)",
+            description: "Mejora la fluidez y latencia en juegos a pantalla completa desactivando la capa de compatibilidad FSO. Muy recomendado para gaming.",
+            recommended: true,
+            action: Action::Registry(vec![
+                reg(r"HKCU:\System\GameConfigStore", "GameDVR_DXGIHonorFSEWindowsCompatible", RegKind::Dword, "1", Some("0")),
+                reg(r"HKCU:\System\GameConfigStore", "GameDVR_FSEBehaviorMode", RegKind::Dword, "2", None),
+                reg(r"HKCU:\System\GameConfigStore", "GameDVR_HonorUserFSEBehaviorMode", RegKind::Dword, "1", Some("0")),
+            ]),
+        },
+        Tweak {
+            id: "visual-effects-performance",
+            category: "Rendimiento",
+            title: "Efectos visuales → Mejor rendimiento",
+            description: "Desactiva animaciones, sombras y transparencias para liberar CPU/GPU. Interfaz más rápida a costa de aspecto más básico.",
+            recommended: false,
+            action: Action::Script {
+                apply: r#"
+$vizPath = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects'
+if (-not (Test-Path $vizPath)) { New-Item -Path $vizPath -Force | Out-Null }
+New-ItemProperty -Path $vizPath -Name 'VisualFXSetting' -Value 2 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name 'DragFullWindows' -Value '0' -PropertyType String -Force | Out-Null
+$wmPath = 'HKCU:\Control Panel\Desktop\WindowMetrics'
+if (-not (Test-Path $wmPath)) { New-Item -Path $wmPath -Force | Out-Null }
+New-ItemProperty -Path $wmPath -Name 'MinAnimate' -Value '0' -PropertyType String -Force | Out-Null
+New-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'ListviewAlphaSelect' -Value 0 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'ListviewShadow' -Value 0 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarAnimations' -Value 0 -PropertyType DWord -Force | Out-Null
+"#,
+                revert: r#"
+$vizPath = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects'
+if (-not (Test-Path $vizPath)) { New-Item -Path $vizPath -Force | Out-Null }
+New-ItemProperty -Path $vizPath -Name 'VisualFXSetting' -Value 1 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name 'DragFullWindows' -Value '1' -PropertyType String -Force | Out-Null
+New-ItemProperty -Path 'HKCU:\Control Panel\Desktop\WindowMetrics' -Name 'MinAnimate' -Value '1' -PropertyType String -Force | Out-Null
+New-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'ListviewAlphaSelect' -Value 1 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'ListviewShadow' -Value 1 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarAnimations' -Value 1 -PropertyType DWord -Force | Out-Null
+"#,
+                check: "((Get-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\VisualEffects' -Name 'VisualFXSetting' -ErrorAction SilentlyContinue).'VisualFXSetting' -eq 2)",
+            },
+        },
+        Tweak {
+            id: "mouse-acceleration",
+            category: "Rendimiento",
+            title: "Desactivar aceleración del ratón",
+            description: "Movimiento 1:1 del ratón sin curva de aceleración. Esencial para gaming y para precisión en el escritorio.",
+            recommended: true,
+            action: Action::Registry(vec![
+                reg(r"HKCU:\Control Panel\Mouse", "MouseSpeed", RegKind::Sz, "0", Some("1")),
+                reg(r"HKCU:\Control Panel\Mouse", "MouseThreshold1", RegKind::Sz, "0", Some("6")),
+                reg(r"HKCU:\Control Panel\Mouse", "MouseThreshold2", RegKind::Sz, "0", Some("10")),
+            ]),
+        },
+        Tweak {
+            id: "services-manual",
+            category: "Rendimiento",
+            title: "Servicios no esenciales → Manual",
+            description: "Pone en modo manual servicios que no se usan en la mayoría de PCs: mapas offline, archivos sin conexión y compartición de conexión. Libera RAM.",
+            recommended: false,
+            action: Action::Script {
+                apply: r#"
+$svcs = @('CscService','MapsBroker','SharedAccess','PhoneSvc')
+foreach ($s in $svcs) {
+    if (Get-Service -Name $s -ErrorAction SilentlyContinue) {
+        Set-Service -Name $s -StartupType Manual -ErrorAction SilentlyContinue
+        Stop-Service -Name $s -Force -ErrorAction SilentlyContinue
+    }
+}
+$ram = [int]((Get-CimInstance Win32_ComputerSystem -ErrorAction SilentlyContinue).TotalPhysicalMemory / 1KB)
+if ($ram -gt 0) { New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control' -Name 'SvcHostSplitThresholdInKB' -Value $ram -PropertyType DWord -Force | Out-Null }
+"#,
+                revert: r#"
+$svcs = @('CscService','MapsBroker','SharedAccess','PhoneSvc')
+foreach ($s in $svcs) {
+    if (Get-Service -Name $s -ErrorAction SilentlyContinue) {
+        Set-Service -Name $s -StartupType Automatic -ErrorAction SilentlyContinue
+    }
+}
+New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control' -Name 'SvcHostSplitThresholdInKB' -Value 3670016 -PropertyType DWord -Force | Out-Null
+"#,
+                check: "((Get-Service -Name 'MapsBroker' -ErrorAction SilentlyContinue).StartType -eq 'Manual')",
+            },
+        },
+        // ----------------------- RED (nuevos) -----------------------
+        Tweak {
+            id: "teredo-disable",
+            category: "Red",
+            title: "Desactivar Teredo",
+            description: "Desactiva el túnel Teredo (transición IPv4→IPv6). Puede mejorar latencia en juegos online. No afecta a la navegación normal.",
+            recommended: true,
+            action: Action::Script {
+                apply: r#"netsh interface teredo set state disabled 2>$null | Out-Null; New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters' -Name 'DisabledComponents' -Value 1 -PropertyType DWord -Force | Out-Null"#,
+                revert: r#"netsh interface teredo set state default 2>$null | Out-Null; Remove-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters' -Name 'DisabledComponents' -ErrorAction SilentlyContinue"#,
+                check: "((Get-ItemProperty -Path 'HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters' -Name 'DisabledComponents' -ErrorAction SilentlyContinue).'DisabledComponents' -ge 1)",
+            },
+        },
+        Tweak {
+            id: "ipv6-disable",
+            category: "Red",
+            title: "Desactivar IPv6 completamente",
+            description: "Deshabilita IPv6 en todos los adaptadores. Puede reducir tiempos de resolución en redes solo IPv4. No recomendado si tu router o ISP usa IPv6.",
+            recommended: false,
+            action: Action::Script {
+                apply: r#"
+Disable-NetAdapterBinding -Name "*" -ComponentID ms_tcpip6 -ErrorAction SilentlyContinue
+New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters' -Name 'DisabledComponents' -Value 255 -PropertyType DWord -Force | Out-Null
+"#,
+                revert: r#"
+Enable-NetAdapterBinding -Name "*" -ComponentID ms_tcpip6 -ErrorAction SilentlyContinue
+Remove-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters' -Name 'DisabledComponents' -ErrorAction SilentlyContinue
+"#,
+                check: "((Get-ItemProperty -Path 'HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters' -Name 'DisabledComponents' -ErrorAction SilentlyContinue).'DisabledComponents' -eq 255)",
+            },
+        },
+        // ----------------------- INTERFAZ (nuevos) -----------------------
+        Tweak {
+            id: "sticky-keys",
+            category: "Interfaz",
+            title: "Desactivar acceso directo de teclas especiales",
+            description: "Deshabilita el cuadro de diálogo que aparece al pulsar Mayúsculas 5 veces (Sticky Keys). No desactiva la funcionalidad, solo la interrupción.",
+            recommended: true,
+            action: Action::Registry(vec![
+                reg(r"HKCU:\Control Panel\Accessibility\StickyKeys", "Flags", RegKind::Sz, "506", Some("510")),
+                reg(r"HKCU:\Control Panel\Accessibility\Keyboard Response", "Flags", RegKind::Sz, "122", Some("126")),
+                reg(r"HKCU:\Control Panel\Accessibility\ToggleKeys", "Flags", RegKind::Sz, "58", Some("62")),
+            ]),
+        },
+        Tweak {
+            id: "num-lock-startup",
+            category: "Interfaz",
+            title: "Activar Bloq Num al iniciar Windows",
+            description: "El teclado numérico estará activo al arrancar sin necesidad de pulsarlo manualmente.",
+            recommended: true,
+            action: Action::Registry(vec![
+                reg(r"HKCU:\Control Panel\Keyboard", "InitialKeyboardIndicators", RegKind::Sz, "2", Some("0")),
+                reg(r"HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon", "InitialKeyboardIndicators", RegKind::Sz, "2", Some("0")),
+            ]),
+        },
+        Tweak {
+            id: "hidden-files",
+            category: "Interfaz",
+            title: "Mostrar archivos y carpetas ocultos",
+            description: "El Explorador de archivos mostrará los elementos marcados como ocultos por el sistema.",
+            recommended: false,
+            action: Action::Registry(vec![
+                reg(EXPLORER_ADV, "Hidden", RegKind::Dword, "1", Some("2")),
+            ]),
+        },
+        Tweak {
+            id: "taskbar-search-hidden",
+            category: "Interfaz",
+            title: "Ocultar icono de búsqueda de la barra de tareas",
+            description: "Elimina el botón de búsqueda visual. El buscador sigue funcionando con la tecla Win.",
+            recommended: false,
+            action: Action::Registry(vec![
+                reg(SEARCH_SETTINGS, "SearchboxTaskbarMode", RegKind::Dword, "0", Some("1")),
+            ]),
+        },
+        Tweak {
+            id: "taskbar-taskview-hidden",
+            category: "Interfaz",
+            title: "Ocultar botón Vista de tareas",
+            description: "Elimina el botón de escritorios virtuales de la barra de tareas.",
+            recommended: false,
+            action: Action::Registry(vec![
+                reg(EXPLORER_ADV, "ShowTaskViewButton", RegKind::Dword, "0", Some("1")),
+            ]),
+        },
+        Tweak {
+            id: "scrollbars-visible",
+            category: "Interfaz",
+            title: "Barras de desplazamiento siempre visibles",
+            description: "Muestra las barras de scroll permanentemente en lugar de ocultarlas cuando no hay foco.",
+            recommended: false,
+            action: Action::Registry(vec![
+                reg(r"HKCU:\Control Panel\Accessibility", "DynamicScrollbars", RegKind::Dword, "0", Some("1")),
+            ]),
+        },
+        Tweak {
+            id: "explorer-home-gallery",
+            category: "Interfaz",
+            title: "Quitar Inicio y Galería del Explorador (Win11)",
+            description: "Elimina las secciones Inicio y Galería del panel izquierdo del Explorador y lo abre directamente en Este equipo.",
+            recommended: false,
+            action: Action::Script {
+                apply: r#"
+Remove-Item -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\{f874310e-b6b7-47dc-bc84-b9e6b38f5903}' -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\{e88865ea-0e1c-4e20-9aa6-edcd0212c87c}' -Recurse -Force -ErrorAction SilentlyContinue
+New-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'LaunchTo' -Value 1 -PropertyType DWord -Force | Out-Null
+"#,
+                revert: r#"
+$k1 = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\{f874310e-b6b7-47dc-bc84-b9e6b38f5903}'
+$k2 = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\{e88865ea-0e1c-4e20-9aa6-edcd0212c87c}'
+if (-not (Test-Path $k1)) { New-Item -Path $k1 -Force | Out-Null }
+if (-not (Test-Path $k2)) { New-Item -Path $k2 -Force | Out-Null }
+Remove-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'LaunchTo' -ErrorAction SilentlyContinue
+"#,
+                check: "(-not (Test-Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Desktop\\NameSpace\\{f874310e-b6b7-47dc-bc84-b9e6b38f5903}'))",
+            },
+        },
+        Tweak {
+            id: "battery-percentage",
+            category: "Interfaz",
+            title: "Mostrar porcentaje de batería en la barra de tareas",
+            description: "Añade el número de porcentaje junto al icono de batería. Útil en portátiles.",
+            recommended: false,
+            action: Action::Registry(vec![
+                reg(r"HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings", "ShowBatteryPercent", RegKind::Dword, "1", Some("0")),
+            ]),
+        },
+        // ----------------------- SISTEMA (nuevos) -----------------------
+        Tweak {
+            id: "storage-sense",
+            category: "Sistema",
+            title: "Desactivar Sensor de almacenamiento",
+            description: "Impide que Windows borre archivos automáticamente con Storage Sense. Tú controlas cuándo limpiar.",
+            recommended: true,
+            action: Action::Registry(vec![
+                reg(r"HKLM:\SOFTWARE\Policies\Microsoft\Windows\StorageSense", "AllowStorageSenseGlobal", RegKind::Dword, "0", None),
+            ]),
+        },
+        Tweak {
+            id: "long-paths",
+            category: "Sistema",
+            title: "Habilitar rutas largas (más de 260 caracteres)",
+            description: "Permite rutas de más de 260 caracteres. Necesario para algunos proyectos de desarrollo.",
+            recommended: false,
+            action: Action::Registry(vec![
+                reg(r"HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem", "LongPathsEnabled", RegKind::Dword, "1", Some("0")),
+            ]),
+        },
+        Tweak {
+            id: "utc-clock",
+            category: "Sistema",
+            title: "Reloj del hardware en UTC (dual boot Linux)",
+            description: "Windows usará UTC como hora del hardware. Necesario para no tener desfase horario en dual boot con Linux.",
+            recommended: false,
+            action: Action::Script {
+                apply: r#"New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation' -Name 'RealTimeIsUniversal' -Value 1 -PropertyType QWord -Force | Out-Null"#,
+                revert: r#"Remove-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation' -Name 'RealTimeIsUniversal' -ErrorAction SilentlyContinue"#,
+                check: "((Get-ItemProperty -Path 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation' -Name 'RealTimeIsUniversal' -ErrorAction SilentlyContinue).'RealTimeIsUniversal' -eq 1)",
+            },
+        },
         // ----------------------- AVANZADO (BAJO TU PROPIO RIESGO) -----------------------
         // Estos tweaks NO se recomiendan: pueden reducir la seguridad o requerir
         // reinicio. Son reversibles, pero actívalos solo si sabes lo que haces.
@@ -544,6 +870,58 @@ $set = $all | Where-Object { (Get-ItemProperty -Path $_.PSPath -Name 'TcpAckFreq
             action: Action::Registry(vec![
                 reg(r"HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", "EnableLUA", RegKind::Dword, "0", Some("1")),
             ]),
+        },
+        Tweak {
+            id: "edge-debloat",
+            category: "Avanzado",
+            title: "Reducir telemetría y funciones de Edge (directivas)",
+            description: "⚠️ Deshabilita via directivas la telemetría, recomendaciones de compras, Rewards y rastreo de Microsoft Edge. Puede interferir con políticas corporativas.",
+            recommended: false,
+            action: Action::Script {
+                apply: r#"
+$p = 'HKLM:\SOFTWARE\Policies\Microsoft\Edge'
+if (-not (Test-Path $p)) { New-Item -Path $p -Force | Out-Null }
+$keys = @{
+    'MetricsReportingEnabled'=0; 'SendSiteInfoToImproveServices'=0
+    'PersonalizationReportingEnabled'=0; 'ShoppingAssistantEnabled'=0
+    'EdgeShoppingAssistantEnabled'=0; 'MicrosoftEdgeInsiderPromotionEnabled'=0
+    'ShowRecommendationsEnabled'=0; 'HubsSidebarEnabled'=0
+    'CryptoWalletEnabled'=0; 'ResolveNavigationErrorsUseWebService'=0
+    'AlternateErrorPagesEnabled'=0; 'EdgeFollowEnabled'=0
+    'EdgeCollectionsEnabled'=0
+}
+foreach ($k in $keys.GetEnumerator()) {
+    New-ItemProperty -Path $p -Name $k.Key -Value $k.Value -PropertyType DWord -Force | Out-Null
+}
+"#,
+                revert: r#"
+$p = 'HKLM:\SOFTWARE\Policies\Microsoft\Edge'
+if (Test-Path $p) { Remove-Item -Path $p -Recurse -Force -ErrorAction SilentlyContinue }
+"#,
+                check: "((Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge' -Name 'MetricsReportingEnabled' -ErrorAction SilentlyContinue).'MetricsReportingEnabled' -eq 0)",
+            },
+        },
+        Tweak {
+            id: "onedrive-remove",
+            category: "Avanzado",
+            title: "⚠️ Eliminar OneDrive del sistema",
+            description: "⚠️ Desinstala OneDrive, limpia sus carpetas residuales y deshabilita su servicio de sincronización. Si usas OneDrive, NO actives esto.",
+            recommended: false,
+            action: Action::Script {
+                apply: r#"
+Stop-Process -Name 'OneDrive' -Force -ErrorAction SilentlyContinue
+$odu = "$env:SystemRoot\SysWOW64\OneDriveSetup.exe"
+if (-not (Test-Path $odu)) { $odu = "$env:SystemRoot\System32\OneDriveSetup.exe" }
+if (Test-Path $odu) { Start-Process $odu '/uninstall' -Wait -ErrorAction SilentlyContinue }
+Remove-Item -Path "$env:USERPROFILE\OneDrive" -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item -Path "$env:LOCALAPPDATA\Microsoft\OneDrive" -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item -Path "$env:ProgramData\Microsoft OneDrive" -Force -Recurse -ErrorAction SilentlyContinue
+Remove-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' -Name 'OneDrive' -ErrorAction SilentlyContinue
+Set-Service -Name 'OneSyncSvc' -StartupType Disabled -ErrorAction SilentlyContinue
+"#,
+                revert: r#"Set-Service -Name 'OneSyncSvc' -StartupType Manual -ErrorAction SilentlyContinue"#,
+                check: r#"(-not (Test-Path "$env:LOCALAPPDATA\Microsoft\OneDrive\OneDrive.exe"))"#,
+            },
         },
     ]
 }

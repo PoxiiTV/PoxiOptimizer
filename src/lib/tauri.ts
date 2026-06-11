@@ -180,3 +180,26 @@ export const openBackupsFolder = () => invoke<void>("open_backups_folder");
 export const getHosts = () => invoke<string>("get_hosts");
 export const setHosts = (content: string) => invoke<void>("set_hosts", { content });
 export const resetHosts = () => invoke<void>("reset_hosts");
+
+/* Herramientas del sistema */
+export interface WinTool {
+  id: string;
+  label: string;
+  desc: string;
+  cmd: string;
+  category: string;
+}
+export const getWindowsTools = () => invoke<WinTool[]>("get_windows_tools");
+export const openWindowsTool = (id: string) => invoke<void>("open_windows_tool", { id });
+
+/* Características opcionales de Windows */
+export interface WinFeature {
+  id: string;
+  name: string;
+  desc: string;
+  restart: boolean;
+  enabled: boolean;
+}
+export const getWindowsFeatures = () => invoke<WinFeature[]>("get_windows_features");
+export const enableWindowsFeature = (id: string) => invoke<string>("enable_windows_feature", { id });
+export const disableWindowsFeature = (id: string) => invoke<string>("disable_windows_feature", { id });

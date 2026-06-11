@@ -26,6 +26,8 @@ export type View =
   | "wupdate"
   | "activate"
   | "hosts"
+  | "wintools"
+  | "winfeatures"
   | "settings";
 
 export interface Toast {

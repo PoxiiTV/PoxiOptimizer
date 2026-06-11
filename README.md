@@ -38,6 +38,8 @@
 | 📦 **Desinstalador** | Lista **todos** los programas y los desinstala en lote. |
 | 🔑 **Activación** | Activa Windows (HWID) y Office (Ohook) vía **MAS**, con resultado en español. |
 | 🌐 **Hosts** | Gestor del archivo hosts del sistema. Bloquea rastreadores, telemetría de Microsoft y más con un clic. |
+| 🔧 **Herramientas del sistema** | Acceso rápido con un clic a 18 herramientas de administración de Windows (Administrador de tareas, Registro, Firewall, Gestión de discos…). |
+| ⚙️ **Características de Windows** | Activa/desactiva características opcionales: .NET 2/3, Hyper-V, WSL, Windows Sandbox, OpenSSH y más. |
 | 💾 **Configuración** | **Exportar/importar** ajustes, **historial de acciones** con deshacer, **backup del registro** y comprobar actualizaciones. |
 
 ### 🛡️ Seguridad ante todo
@@ -50,7 +52,7 @@
 
 ### 🚀 Instalación
 
-1. Descarga el instalador `PoxiOptimizer_3.0.2_x64-setup.exe` desde la pestaña [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases).
+1. Descarga el instalador `PoxiOptimizer_3.5.0_x64-setup.exe` desde la pestaña [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases).
 2. Ejecútalo y sigue el asistente.
 3. Abre **PoxiOptimizer** y acepta el aviso de administrador.
 
@@ -89,6 +91,8 @@ npm run tauri build    # genera el instalador en src-tauri/target/release/bundle
 | 📦 **Uninstaller** | Lists **every** program and removes them in batch. |
 | 🔑 **Activation** | Activates Windows (HWID) and Office (Ohook) via **MAS**, with result in Spanish. |
 | 🌐 **Hosts** | System hosts file manager. Block trackers, Microsoft telemetry and more in one click. |
+| 🔧 **System tools** | One-click access to 18 Windows admin tools (Task Manager, Registry Editor, Firewall, Disk Management…). |
+| ⚙️ **Windows features** | Enable/disable optional features: .NET 2/3, Hyper-V, WSL, Windows Sandbox, OpenSSH and more. |
 | 💾 **Configuration** | **Export/import** tweaks, **action history** with undo, **registry backup** and update check. |
 
 ### 🛡️ Safety first
@@ -101,7 +105,7 @@ npm run tauri build    # genera el instalador en src-tauri/target/release/bundle
 
 ### 🚀 Installation
 
-1. Download `PoxiOptimizer_3.0.2_x64-setup.exe` from the [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases) tab.
+1. Download `PoxiOptimizer_3.5.0_x64-setup.exe` from the [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases) tab.
 2. Run it and follow the wizard.
 3. Open **PoxiOptimizer** and accept the administrator prompt.
 

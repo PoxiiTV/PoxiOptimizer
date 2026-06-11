@@ -18,6 +18,8 @@ mod temps;
 mod tweaks;
 mod uninstall;
 mod update;
+mod winfeatures;
+mod wintools;
 mod wupdate;
 
 /// En release, si la app no esta elevada, se relanza solicitando permisos de
@@ -113,6 +115,13 @@ pub fn run() {
             hosts::get_hosts,
             hosts::set_hosts,
             hosts::reset_hosts,
+            // Herramientas del sistema
+            wintools::get_windows_tools,
+            wintools::open_windows_tool,
+            // Características opcionales de Windows
+            winfeatures::get_windows_features,
+            winfeatures::enable_windows_feature,
+            winfeatures::disable_windows_feature,
         ])
         .run(tauri::generate_context!())
         .expect("error al ejecutar PoxiOptimizer");

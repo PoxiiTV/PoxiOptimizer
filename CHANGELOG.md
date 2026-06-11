@@ -4,6 +4,52 @@ Todas las versiones notables de PoxiOptimizer. / All notable versions of PoxiOpt
 
 ---
 
+## [3.5.0] — 2026-06-12
+
+### 🇪🇸 Español
+
+#### ✨ Novedades
+- **⚙️ ~25 tweaks nuevos** — de 28 a 53 tweaks totales. Más del doble que WinUtil. Nuevas categorías: desactivar Copilot/Recall, FSO (pantalla completa), aceleración del ratón, Teredo, IPv6, Sticky Keys, Num Lock, Storage Sense, entrega P2P de actualizaciones, OneDrive, debloat de Edge, efectos visuales, rutas largas, UTC…
+- **🎮 Perfiles actualizados** — El perfil Gaming añade FSO desactivado, sin aceleración del ratón y servicios al mínimo. El perfil Privacidad incluye Copilot, Cortana y todas las nuevas claves de telemetría.
+- **🔧 Panel de herramientas del sistema** — Acceso rápido a 18 herramientas de administración de Windows (Administrador de tareas, Registro, Firewall, Gestión de discos, DirectX, Monitor de recursos…) organizadas por categoría.
+- **⚙️ Características opcionales de Windows** — Activa/desactiva .NET 2/3, Hyper-V, WSL, Windows Sandbox, OpenSSH, NFS y Telnet desde la app. Con detección automática del estado actual.
+- **🚀 Banner Ruxi en el Dashboard** — Integración con [Ruxi](https://github.com/PoxiiTV/Ruxi-Custom-Rufus), el creador de USB de Windows más fácil. Recomendación directa desde la pantalla de inicio.
+
+#### ⚡ Mejoras
+- Perfiles Recomendado, Gaming y Privacidad rediseñados con los nuevos tweaks incluidos.
+- Sidebar reorganizado con nuevo grupo "Avanzado" para Herramientas y Características.
+
+#### 🐛 Correcciones
+- Tamaño de ventana por defecto ahora 1647×922 (antes 1120×740 era demasiado pequeño).
+- Las esquinas redondeadas de `#root` desaparecen al maximizar la ventana y vuelven al restaurarla.
+- El círculo del toggle en la sección Hosts ya no se sale de los límites cuando está activo.
+- El scroll vuelve al inicio al cambiar de vista.
+- El cursor de mano aparece ahora en todos los elementos interactivos.
+- Las tarjetas de Herramientas del sistema ya no tenían un `Card` anidado dentro de un `button`.
+
+### 🇬🇧 English
+
+#### ✨ What's new
+- **⚙️ ~25 new tweaks** — from 28 to 53 tweaks total. More than double WinUtil. New: disable Copilot/Recall, FSO (fullscreen), mouse acceleration, Teredo, IPv6, Sticky Keys, Num Lock, Storage Sense, delivery optimization, OneDrive removal, Edge debloat, visual effects, long paths, UTC clock…
+- **🎮 Updated profiles** — Gaming profile adds FSO off, no mouse acceleration and services set to manual. Privacy profile covers Copilot, Cortana and all new telemetry keys.
+- **🔧 System tools panel** — Quick access to 18 Windows admin tools (Task Manager, Registry Editor, Firewall, Disk Management, DirectX, Resource Monitor…) grouped by category.
+- **⚙️ Optional Windows features** — Enable/disable .NET 2/3, Hyper-V, WSL, Windows Sandbox, OpenSSH, NFS and Telnet from inside the app. Auto-detects current state.
+- **🚀 Ruxi banner on Dashboard** — Integration with [Ruxi](https://github.com/PoxiiTV/Ruxi-Custom-Rufus), the easiest Windows USB creator. Direct recommendation from the home screen.
+
+#### ⚡ Improvements
+- Recommended, Gaming and Privacy profiles redesigned to include new tweaks.
+- Sidebar reorganised with new "Advanced" group for Tools and Features.
+
+#### 🐛 Bug fixes
+- Default window size set to 1647×922 (previous 1120×740 was too small).
+- Rounded corners on `#root` no longer show when the window is maximized; they return on restore.
+- Hosts toggle circle no longer goes out of bounds when active.
+- Scroll position now resets to the top when switching views.
+- Cursor pointer now shows on all interactive elements.
+- System Tools cards no longer have a nested `Card` component inside a `button`.
+
+---
+
 ## [3.0.2] — 2026-06-12
 
 ### 🇪🇸 Español

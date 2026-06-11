@@ -14,10 +14,15 @@ import {
   ChevronRight,
   AlertTriangle,
   Thermometer,
+  Usb,
+  ArrowRight,
 } from "lucide-react";
 import { Card } from "../components/ui";
 import { useStore, useT } from "../store";
 import { createRestorePoint, getTemperatures, type TempInfo } from "../lib/tauri";
+import { openUrl } from "@tauri-apps/plugin-opener";
+
+const RUXI_URL = "https://github.com/PoxiiTV/Ruxi-Custom-Rufus/releases/latest";
 
 function Ring({ percent, label }: { percent: number; label: string }) {
   const r = 30;
@@ -184,6 +189,32 @@ export function Dashboard() {
           <InfoRow icon={Clock} label={t("dash.uptime")} value={info ? `${info.uptime_hours} ${t("dash.hours")}` : "…"} />
         </div>
       </Card>
+
+      {/* Banner Ruxi */}
+      <motion.button
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15, duration: 0.4 }}
+        onClick={() => openUrl(RUXI_URL).catch(() => {})}
+        className="w-full mb-4 glass rounded-2xl p-4 flex items-center gap-4 hover:bg-[var(--color-surface-hover)] transition-colors group text-left"
+      >
+        <div className="grid place-items-center w-12 h-12 rounded-xl accent-gradient shrink-0">
+          <Usb size={22} className="text-white" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--color-accent)] mb-0.5">
+            {t("dash.ruxi.eyebrow")}
+          </p>
+          <p className="font-semibold text-sm">{t("dash.ruxi.title")}</p>
+          <p className="text-xs text-[var(--color-text-muted)] leading-snug mt-0.5 line-clamp-1">
+            {t("dash.ruxi.body")}
+          </p>
+        </div>
+        <div className="shrink-0 flex items-center gap-1.5 text-[var(--color-accent)] text-xs font-semibold">
+          <span className="hidden sm:block">{t("dash.ruxi.cta")}</span>
+          <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
+        </div>
+      </motion.button>
 
       {/* Acciones rápidas */}
       <p className="text-sm font-semibold mb-2.5 mt-6">{t("dash.quick")}</p>

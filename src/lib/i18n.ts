@@ -282,6 +282,33 @@ const es: Dict = {
   "hosts.saved": "Archivo hosts guardado y DNS actualizado",
   "hosts.noEntries": "El archivo hosts no tiene entradas activas.",
   "hosts.info": "Las IPs 0.0.0.0 bloquean el acceso al dominio. El navegador no podrá resolver esa dirección.",
+
+  // Herramientas del sistema
+  "nav.wintools": "Herramientas",
+  "nav.winfeatures": "Características",
+  "nav.group.advanced": "Avanzado",
+  "wintools.title": "Herramientas del sistema",
+  "wintools.subtitle": "Acceso rápido a las herramientas de administración de Windows, sin buscarlas en el menú.",
+  "wintools.cat.Rendimiento": "Rendimiento y procesos",
+  "wintools.cat.Hardware": "Hardware",
+  "wintools.cat.Sistema": "Sistema",
+  "wintools.cat.Red": "Red",
+  "wintools.cat.Energía": "Energía",
+  "wintools.cat.Sonido": "Sonido",
+
+  // Características opcionales de Windows
+  "winfeatures.title": "Características de Windows",
+  "winfeatures.subtitle": "Activa o desactiva características opcionales del sistema. Puede requerir reinicio.",
+  "winfeatures.enable": "Activar",
+  "winfeatures.disable": "Desactivar",
+  "winfeatures.restart": "Requiere reinicio",
+  "winfeatures.loading": "Comprobando características…",
+
+  // Banner Ruxi en el Dashboard
+  "dash.ruxi.eyebrow": "De Poxi para ti",
+  "dash.ruxi.title": "¿Vas a formatear? Usa Ruxi",
+  "dash.ruxi.body": "El USB de Windows más fácil de crear. Asistente paso a paso, descarga la ISO, crea el USB y te guía hasta el primer arranque.",
+  "dash.ruxi.cta": "Descargar Ruxi gratis",
 };
 
 const en: Dict = {
@@ -556,6 +583,33 @@ const en: Dict = {
   "hosts.saved": "Hosts file saved and DNS flushed",
   "hosts.noEntries": "The hosts file has no active entries.",
   "hosts.info": "IPs set to 0.0.0.0 block access to that domain. The browser will not be able to resolve it.",
+
+  // System tools
+  "nav.wintools": "Tools",
+  "nav.winfeatures": "Features",
+  "nav.group.advanced": "Advanced",
+  "wintools.title": "System tools",
+  "wintools.subtitle": "Quick access to Windows admin tools — no need to search the Start menu.",
+  "wintools.cat.Rendimiento": "Performance & processes",
+  "wintools.cat.Hardware": "Hardware",
+  "wintools.cat.Sistema": "System",
+  "wintools.cat.Red": "Network",
+  "wintools.cat.Energía": "Power",
+  "wintools.cat.Sonido": "Sound",
+
+  // Optional Windows features
+  "winfeatures.title": "Windows features",
+  "winfeatures.subtitle": "Enable or disable optional system features. May require a restart.",
+  "winfeatures.enable": "Enable",
+  "winfeatures.disable": "Disable",
+  "winfeatures.restart": "Restart required",
+  "winfeatures.loading": "Checking features…",
+
+  // Ruxi banner on Dashboard
+  "dash.ruxi.eyebrow": "By Poxi, for you",
+  "dash.ruxi.title": "Formatting your PC? Use Ruxi",
+  "dash.ruxi.body": "The easiest Windows USB ever. Step-by-step wizard, ISO download, USB creation and boot guide included.",
+  "dash.ruxi.cta": "Download Ruxi for free",
 };
 
 const dicts: Record<Lang, Dict> = { es, en };

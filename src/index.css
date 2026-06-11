@@ -62,6 +62,11 @@ body {
   overflow: hidden;
 }
 
+/* Sin esquinas cuando la ventana está maximizada */
+html.maximized #root {
+  border-radius: 0;
+}
+
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -83,6 +88,19 @@ body {
 input,
 textarea {
   user-select: text;
+}
+
+/* Cursor pointer en todos los elementos interactivos */
+button,
+[role="button"],
+a,
+select,
+label[for] {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
 }
 
 /* ---------- utilidades de glassmorphism ---------- */
