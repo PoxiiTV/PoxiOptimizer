@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { Gauge, Wand2, AlertTriangle } from "lucide-react";
-import { Badge, Button, Card, CenterSpinner, PageHeader, Toggle } from "../components/ui";
+import { motion } from "framer-motion";
+import { Gauge, AlertTriangle, ShieldCheck, Gamepad2, EyeOff, type LucideIcon } from "lucide-react";
+import { Badge, Card, CenterSpinner, PageHeader, Toggle } from "../components/ui";
 import { useStore, useT } from "../store";
 import {
   getTweaks,
@@ -9,6 +10,13 @@ import {
   revertTweak,
   type TweakMeta,
 } from "../lib/tauri";
+import { PROFILES } from "../data/profiles";
+
+const PROFILE_ICONS: Record<string, LucideIcon> = {
+  "shield-check": ShieldCheck,
+  gamepad: Gamepad2,
+  "eye-off": EyeOff,
+};
 
 const CATEGORY_ORDER = [
   "Privacidad",
@@ -21,13 +29,14 @@ const CATEGORY_ORDER = [
 
 export function Optimize() {
   const t = useT();
+  const lang = useStore((s) => s.lang);
   const pushToast = useStore((s) => s.pushToast);
   const ensureRestorePoint = useStore((s) => s.ensureRestorePoint);
   const [tweaks, setTweaks] = useState<TweakMeta[]>([]);
   const [states, setStates] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
-  const [applyingAll, setApplyingAll] = useState(false);
+  const [applyingProfile, setApplyingProfile] = useState<string | null>(null);
 
   const load = async () => {
     const [list, st] = await Promise.all([getTweaks(), checkAllTweaks()]);
@@ -66,20 +75,22 @@ export function Optimize() {
     }
   };
 
-  const applyRecommended = async () => {
-    setApplyingAll(true);
+  const applyProfile = async (profileId: string, ids: string[]) => {
+    setApplyingProfile(profileId);
     await ensureRestorePoint();
-    const pending = tweaks.filter((tw) => tw.recommended && !states[tw.id]);
-    for (const tw of pending) {
+    const pending = ids.filter((id) => !states[id]);
+    let ok = 0;
+    for (const id of pending) {
       try {
-        await applyTweak(tw.id);
-        setStates((s) => ({ ...s, [tw.id]: true }));
+        await applyTweak(id);
+        setStates((s) => ({ ...s, [id]: true }));
+        ok++;
       } catch {
         /* continúa con el resto */
       }
     }
-    setApplyingAll(false);
-    pushToast(`${pending.length} ${t("common.applied").toLowerCase()}`, "success");
+    setApplyingProfile(null);
+    pushToast(`${ok} ${t("common.applied").toLowerCase()}`, "success");
   };
 
   if (loading) return <CenterSpinner label={t("common.loading")} />;
@@ -88,12 +99,37 @@ export function Optimize() {
     <div>
       <PageHeader icon={Gauge} title={t("opt.title")} subtitle={t("opt.subtitle")} />
 
-      <div className="flex justify-end mb-4">
-        <Button icon={Wand2} onClick={applyRecommended} loading={applyingAll}>
-          {t("opt.applyRecommended")}
-        </Button>
+      {/* Perfiles 1-clic */}
+      <p className="text-sm font-semibold mb-2.5">{t("opt.profiles")}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-7">
+        {PROFILES.map((p) => {
+          const Icon = PROFILE_ICONS[p.icon];
+          return (
+            <motion.button
+              key={p.id}
+              whileTap={{ scale: 0.97 }}
+              disabled={applyingProfile !== null}
+              onClick={() => applyProfile(p.id, p.tweaks)}
+              className="glass rounded-2xl p-4 text-left hover:bg-[var(--color-surface-hover)] transition-colors disabled:opacity-60"
+            >
+              <div className="flex items-center gap-2.5 mb-2">
+                <div className="grid place-items-center w-9 h-9 rounded-xl accent-gradient">
+                  <Icon size={18} className="text-white" />
+                </div>
+                <p className="font-semibold text-sm">{lang === "en" ? p.nameEn : p.name}</p>
+              </div>
+              <p className="text-xs text-[var(--color-text-muted)] leading-snug">
+                {lang === "en" ? p.descEn : p.desc}
+              </p>
+              {applyingProfile === p.id && (
+                <p className="text-xs text-[var(--color-accent)] mt-2">{t("common.working")}</p>
+              )}
+            </motion.button>
+          );
+        })}
       </div>
 
+      <p className="text-sm font-semibold mb-2.5">{t("opt.allTweaks")}</p>
       <div className="flex flex-col gap-6">
         {grouped.map((group) => {
           const advanced = group.category === "Avanzado";

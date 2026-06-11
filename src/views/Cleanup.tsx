@@ -1,27 +1,59 @@
 import { useState } from "react";
-import { Sparkles, FileX2, RefreshCw, Recycle, Globe, Play } from "lucide-react";
+import {
+  Sparkles,
+  FileX2,
+  RefreshCw,
+  Recycle,
+  Globe,
+  Play,
+  Image,
+  ScrollText,
+  Printer,
+  Boxes,
+} from "lucide-react";
 import { Button, Card, PageHeader, Toggle } from "../components/ui";
 import { useStore, useT } from "../store";
 import { runCleanup } from "../lib/tauri";
+
+type Key =
+  | "temp"
+  | "update_cache"
+  | "browser_cache"
+  | "thumbnails"
+  | "win_logs"
+  | "recycle_bin"
+  | "print_queue"
+  | "dns"
+  | "winsxs";
 
 export function Cleanup() {
   const t = useT();
   const pushToast = useStore((s) => s.pushToast);
   const ensureRestorePoint = useStore((s) => s.ensureRestorePoint);
-  const [opts, setOpts] = useState({
+  const [opts, setOpts] = useState<Record<Key, boolean>>({
     temp: true,
-    update: true,
-    recycle: true,
+    update_cache: true,
+    browser_cache: false,
+    thumbnails: true,
+    win_logs: true,
+    recycle_bin: true,
+    print_queue: false,
     dns: false,
+    winsxs: false,
   });
   const [working, setWorking] = useState(false);
   const [freed, setFreed] = useState<number | null>(null);
 
-  const items = [
-    { key: "temp" as const, icon: FileX2, title: t("cleanup.temp"), desc: t("cleanup.tempDesc") },
-    { key: "update" as const, icon: RefreshCw, title: t("cleanup.update"), desc: t("cleanup.updateDesc") },
-    { key: "recycle" as const, icon: Recycle, title: t("cleanup.recycle"), desc: t("cleanup.recycleDesc") },
-    { key: "dns" as const, icon: Globe, title: t("cleanup.dns"), desc: t("cleanup.dnsDesc") },
+  const items: { key: Key; icon: typeof FileX2; title: string; desc: string }[] = [
+    { key: "temp", icon: FileX2, title: t("cleanup.temp"), desc: t("cleanup.tempDesc") },
+    { key: "update_cache", icon: RefreshCw, title: t("cleanup.update"), desc: t("cleanup.updateDesc") },
+    { key: "browser_cache", icon: Globe, title: t("cleanup.browser"), desc: t("cleanup.browserDesc") },
+    { key: "thumbnails", icon: Image, title: t("cleanup.thumbs"), desc: t("cleanup.thumbsDesc") },
+    { key: "win_logs", icon: ScrollText, title: t("cleanup.logs"), desc: t("cleanup.logsDesc") },
+    { key: "print_queue", icon: Printer, title: t("cleanup.print"), desc: t("cleanup.printDesc") },
+    { key: "recycle_bin", icon: Recycle, title: t("cleanup.recycle"), desc: t("cleanup.recycleDesc") },
+    { key: "dns", icon: Globe, title: t("cleanup.dns"), desc: t("cleanup.dnsDesc") },
+    { key: "winsxs", icon: Boxes, title: t("cleanup.winsxs"), desc: t("cleanup.winsxsDesc") },
   ];
 
   const run = async () => {
@@ -29,7 +61,8 @@ export function Cleanup() {
     setFreed(null);
     await ensureRestorePoint();
     try {
-      const res = await runCleanup(opts.temp, opts.update, opts.recycle, opts.dns);
+      const selected = (Object.keys(opts) as Key[]).filter((k) => opts[k]);
+      const res = await runCleanup(selected);
       setFreed(res.freed_mb);
       pushToast(`${t("cleanup.freed")}: ${res.freed_mb} MB`, "success");
     } catch (e) {
@@ -68,9 +101,7 @@ export function Cleanup() {
         {freed !== null && (
           <p className="text-sm">
             <span className="text-[var(--color-text-muted)]">{t("cleanup.freed")}: </span>
-            <span className="font-semibold text-[var(--color-success)] tabular-nums">
-              {freed} MB
-            </span>
+            <span className="font-semibold text-[var(--color-success)] tabular-nums">{freed} MB</span>
           </p>
         )}
       </div>

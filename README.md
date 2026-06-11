@@ -26,12 +26,17 @@
 | Módulo | Qué hace |
 |--------|----------|
 | 🏠 **Inicio** | Panel con info del sistema (CPU, GPU, RAM, disco), estado de activación y acciones rápidas. |
-| ⚙️ **Optimización** | +25 *tweaks* **seguros y reversibles** de privacidad, telemetría, rendimiento, red e interfaz. Cada uno se activa/desactiva con un interruptor. |
-| ✨ **Limpieza** | Borra temporales, caché de Windows Update, papelera y caché DNS. Muestra el espacio liberado. |
-| 🗑️ **Quitar bloatware** | Desinstala apps preinstaladas de la Store. Los componentes críticos están **protegidos**. |
-| ⬇️ **Instalar apps** | Catálogo de programas populares instalables con un clic vía **winget**. |
-| 📦 **Desinstalador** | Lista **todos** los programas del equipo (escritorio y Store) y los desinstala. |
-| 🔑 **Activación** | Activa Windows (licencia digital HWID) y Office (Ohook) mediante el script oficial de **MAS**. |
+| ⚙️ **Optimización** | +30 *tweaks* **seguros y reversibles** + **perfiles 1 clic** (Recomendado, Gaming, Privacidad) + sección **Avanzado (bajo tu riesgo)**. |
+| ✨ **Limpieza** | Temporales, caché de Update y navegadores, miniaturas, logs, cola de impresión, papelera, DNS y **WinSxS** (DISM). |
+| 🔧 **Reparar Windows** | **SFC**, **DISM** (RestoreHealth) y **restablecer Windows Update**. |
+| 🚀 **Inicio (arranque)** | Activa/desactiva los programas que arrancan con Windows. |
+| 🌐 **Red y DNS** | Cambia a **Google DNS** o Cloudflare con un clic. |
+| 🔄 **Windows Update** | Por defecto · Solo seguridad · Deshabilitado. |
+| 🗑️ **Quitar bloatware** | Desinstala apps de la Store. Componentes críticos **protegidos**. |
+| ⬇️ **Instalar apps** | Catálogo de +50 programas + **buscador winget en vivo**. |
+| 📦 **Desinstalador** | Lista **todos** los programas y los desinstala en lote. |
+| 🔑 **Activación** | Activa Windows (HWID) y Office (Ohook) vía **MAS**, con resultado en español. |
+| 💾 **Configuración** | **Exportar/importar** tus ajustes y **comprobar actualizaciones**. |
 
 ### 🛡️ Seguridad ante todo
 
@@ -43,7 +48,7 @@
 
 ### 🚀 Instalación
 
-1. Descarga el instalador `PoxiOptimizer_1.0.0_x64-setup.exe` desde la pestaña [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases).
+1. Descarga el instalador `PoxiOptimizer_2.0.0_x64-setup.exe` desde la pestaña [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases).
 2. Ejecútalo y sigue el asistente.
 3. Abre **PoxiOptimizer** y acepta el aviso de administrador.
 
@@ -70,12 +75,17 @@ npm run tauri build    # genera el instalador en src-tauri/target/release/bundle
 | Module | What it does |
 |--------|--------------|
 | 🏠 **Home** | Dashboard with system info (CPU, GPU, RAM, disk), activation status and quick actions. |
-| ⚙️ **Optimization** | 25+ **safe, reversible tweaks** for privacy, telemetry, performance, network and UI. Toggle each on/off. |
-| ✨ **Cleanup** | Clears temp files, Windows Update cache, recycle bin and DNS cache. Shows freed space. |
-| 🗑️ **Remove bloatware** | Uninstalls preinstalled Store apps. Critical components are **protected**. |
-| ⬇️ **Install apps** | Catalog of popular programs installable in one click via **winget**. |
-| 📦 **Uninstaller** | Lists **every** program on your PC (desktop & Store) and removes them. |
-| 🔑 **Activation** | Activates Windows (HWID digital license) and Office (Ohook) via the official **MAS** script. |
+| ⚙️ **Optimization** | 30+ **safe, reversible tweaks** + **1-click profiles** (Recommended, Gaming, Privacy) + **Advanced (at your own risk)** section. |
+| ✨ **Cleanup** | Temp files, Update & browser cache, thumbnails, logs, print queue, recycle bin, DNS and **WinSxS** (DISM). |
+| 🔧 **Repair Windows** | **SFC**, **DISM** (RestoreHealth) and **reset Windows Update**. |
+| 🚀 **Startup** | Enable/disable programs that launch with Windows. |
+| 🌐 **Network & DNS** | Switch to **Google DNS** or Cloudflare in one click. |
+| 🔄 **Windows Update** | Default · Security only · Disabled. |
+| 🗑️ **Remove bloatware** | Uninstalls Store apps. Critical components **protected**. |
+| ⬇️ **Install apps** | Catalog of 50+ programs + **live winget search**. |
+| 📦 **Uninstaller** | Lists **every** program and removes them in batch. |
+| 🔑 **Activation** | Activates Windows (HWID) and Office (Ohook) via **MAS**, with result in Spanish. |
+| 💾 **Configuration** | **Export/import** your tweaks and **check for updates**. |
 
 ### 🛡️ Safety first
 
@@ -87,7 +97,7 @@ npm run tauri build    # genera el instalador en src-tauri/target/release/bundle
 
 ### 🚀 Installation
 
-1. Download `PoxiOptimizer_1.0.0_x64-setup.exe` from the [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases) tab.
+1. Download `PoxiOptimizer_2.0.0_x64-setup.exe` from the [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases) tab.
 2. Run it and follow the wizard.
 3. Open **PoxiOptimizer** and accept the administrator prompt.
 

@@ -4,6 +4,7 @@ import { TitleBar } from "./components/TitleBar";
 import { Sidebar } from "./components/Sidebar";
 import { Toasts } from "./components/Toasts";
 import { RestoreOverlay } from "./components/RestoreOverlay";
+import { Onboarding } from "./components/Onboarding";
 import { useStore } from "./store";
 
 import { Dashboard } from "./views/Dashboard";
@@ -12,6 +13,9 @@ import { Debloat } from "./views/Debloat";
 import { Install } from "./views/Install";
 import { Uninstall } from "./views/Uninstall";
 import { Cleanup } from "./views/Cleanup";
+import { Repair } from "./views/Repair";
+import { Startup } from "./views/Startup";
+import { Network } from "./views/Network";
 import { WindowsUpdate } from "./views/WindowsUpdate";
 import { Activate } from "./views/Activate";
 import { Settings } from "./views/Settings";
@@ -23,6 +27,9 @@ const VIEWS = {
   install: Install,
   uninstall: Uninstall,
   cleanup: Cleanup,
+  repair: Repair,
+  startup: Startup,
+  network: Network,
   wupdate: WindowsUpdate,
   activate: Activate,
   settings: Settings,
@@ -90,6 +97,7 @@ export default function App() {
 
       <Toasts />
       <RestoreOverlay />
+      <Onboarding />
     </div>
   );
 }

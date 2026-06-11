@@ -16,6 +16,9 @@ export type View =
   | "install"
   | "uninstall"
   | "cleanup"
+  | "repair"
+  | "startup"
+  | "network"
   | "wupdate"
   | "activate"
   | "settings";

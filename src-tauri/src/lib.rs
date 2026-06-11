@@ -4,11 +4,16 @@
 mod activation;
 mod apps;
 mod cleanup;
+mod config;
 mod debloat;
+mod net;
 mod ps;
+mod repair;
+mod startup;
 mod system;
 mod tweaks;
 mod uninstall;
+mod update;
 mod wupdate;
 
 /// En release, si la app no esta elevada, se relanza solicitando permisos de
@@ -60,6 +65,7 @@ pub fn run() {
             // Apps (winget)
             apps::winget_available,
             apps::install_app,
+            apps::winget_search,
             // Desinstalador
             uninstall::list_programs,
             uninstall::uninstall_program,
@@ -72,6 +78,20 @@ pub fn run() {
             // Windows Update
             wupdate::get_windows_update_mode,
             wupdate::set_windows_update_mode,
+            // Reparación de Windows
+            repair::run_sfc,
+            repair::run_dism,
+            repair::reset_windows_update,
+            // Gestor de inicio
+            startup::list_startup,
+            startup::set_startup,
+            // Red / DNS
+            net::set_dns,
+            // Configuración (exportar / importar)
+            config::export_config,
+            config::import_config,
+            // Actualizaciones
+            update::check_update,
         ])
         .run(tauri::generate_context!())
         .expect("error al ejecutar PoxiOptimizer");

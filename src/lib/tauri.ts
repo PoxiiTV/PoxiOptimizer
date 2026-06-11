@@ -57,6 +57,27 @@ export interface CleanupResult {
   details: string[];
 }
 
+export interface WingetResult {
+  id: string;
+  name: string;
+  version: string;
+}
+
+export interface StartupItem {
+  name: string;
+  command: string;
+  location: string;
+  enabled: boolean;
+}
+
+export interface UpdateInfo {
+  update_available: boolean;
+  current: string;
+  latest: string;
+  url: string;
+  notes: string;
+}
+
 /* Sistema */
 export const getSystemInfo = () => invoke<SystemInfo>("get_system_info");
 export const isAdmin = () => invoke<boolean>("is_admin");
@@ -82,6 +103,8 @@ export const removeAppx = (name: string) =>
 export const wingetAvailable = () => invoke<boolean>("winget_available");
 export const installApp = (wingetId: string) =>
   invoke<string>("install_app", { wingetId });
+export const wingetSearch = (query: string) =>
+  invoke<WingetResult[]>("winget_search", { query });
 
 /* Desinstalador */
 export const listPrograms = () => invoke<Program[]>("list_programs");
@@ -100,15 +123,26 @@ export const setWindowsUpdateMode = (mode: string) =>
   invoke<string>("set_windows_update_mode", { mode });
 
 /* Limpieza */
-export const runCleanup = (
-  temp: boolean,
-  updateCache: boolean,
-  recycleBin: boolean,
-  dns: boolean,
-) =>
-  invoke<CleanupResult>("run_cleanup", {
-    temp,
-    updateCache,
-    recycleBin,
-    dns,
-  });
+export const runCleanup = (options: string[]) =>
+  invoke<CleanupResult>("run_cleanup", { options });
+
+/* Reparación de Windows */
+export const runSfc = () => invoke<string>("run_sfc");
+export const runDism = () => invoke<string>("run_dism");
+export const resetWindowsUpdate = () => invoke<string>("reset_windows_update");
+
+/* Gestor de inicio */
+export const listStartup = () => invoke<StartupItem[]>("list_startup");
+export const setStartup = (name: string, location: string, enable: boolean) =>
+  invoke<string>("set_startup", { name, location, enable });
+
+/* Red / DNS */
+export const setDns = (provider: string) => invoke<string>("set_dns", { provider });
+
+/* Configuración */
+export const exportConfig = (json: string) =>
+  invoke<string>("export_config", { json });
+export const importConfig = () => invoke<string>("import_config");
+
+/* Actualizaciones */
+export const checkUpdate = () => invoke<UpdateInfo>("check_update");

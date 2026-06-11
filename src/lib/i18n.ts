@@ -140,6 +140,71 @@ const es: Dict = {
   "settings.repo": "Repositorio en GitHub",
   "settings.credits":
     "Inspirado en winutil (Chris Titus), Optimizer (hellzerg) y MAS (massgravel).",
+
+  "nav.repair": "Reparar Windows",
+  "nav.startup": "Inicio (arranque)",
+  "nav.network": "Red y DNS",
+
+  "opt.profiles": "Perfiles de optimización (1 clic)",
+  "opt.allTweaks": "Todos los ajustes",
+
+  "cleanup.browser": "Caché de navegadores",
+  "cleanup.browserDesc": "Chrome, Edge, Brave y Firefox",
+  "cleanup.thumbs": "Miniaturas",
+  "cleanup.thumbsDesc": "Caché de miniaturas del Explorador",
+  "cleanup.logs": "Logs de Windows",
+  "cleanup.logsDesc": "Registros de CBS y DISM",
+  "cleanup.print": "Cola de impresión",
+  "cleanup.printDesc": "Trabajos de impresión atascados",
+  "cleanup.winsxs": "Componentes antiguos (WinSxS)",
+  "cleanup.winsxsDesc": "Limpieza profunda con DISM. Puede tardar varios minutos.",
+
+  "install.searchPlaceholder": "Buscar en el catálogo o en winget…",
+  "install.liveResults": "Resultados de winget",
+
+  "repair.title": "Reparar Windows",
+  "repair.subtitle": "Soluciona archivos de sistema dañados y problemas de actualización.",
+  "repair.note": "Estas operaciones pueden tardar varios minutos. No cierres la app mientras se ejecutan.",
+  "repair.started": "Iniciado, esto puede tardar varios minutos…",
+  "repair.running": "Ejecutando, espera…",
+  "repair.sfc": "Comprobar archivos de sistema (SFC)",
+  "repair.sfcDesc": "Busca y repara archivos de Windows dañados.",
+  "repair.dism": "Reparar imagen de Windows (DISM)",
+  "repair.dismDesc": "Repara el almacén de componentes. Requiere internet.",
+  "repair.wu": "Restablecer Windows Update",
+  "repair.wuDesc": "Reinicia los componentes y la caché de actualizaciones.",
+
+  "startup.title": "Programas de inicio",
+  "startup.subtitle": "Controla qué programas arrancan con Windows para acelerar el encendido.",
+
+  "net.title": "Red y DNS",
+  "net.subtitle": "Cambia los servidores DNS de tu conexión. Google DNS es rápido y fiable.",
+  "net.auto": "Automático (DHCP)",
+  "net.autoDesc": "Usa el DNS de tu proveedor / router",
+  "net.note": "Cambiar el DNS puede mejorar la velocidad de navegación y la resolución de nombres. Si tienes problemas de conexión, vuelve a 'Automático'.",
+
+  "settings.config": "Configuración",
+  "settings.configDesc": "Guarda tus ajustes aplicados o impórtalos en otro equipo.",
+  "settings.export": "Exportar",
+  "settings.import": "Importar",
+  "settings.imported": "Configuración importada",
+  "settings.updates": "Actualizaciones",
+  "settings.checkUpdate": "Comprobar actualizaciones",
+  "settings.upToDate": "Ya tienes la última versión ✅",
+  "settings.newVersion": "Nueva versión disponible:",
+  "settings.download": "Descargar",
+
+  "onb.1.title": "Bienvenido a PoxiOptimizer",
+  "onb.1.body": "La herramienta definitiva para optimizar, limpiar y activar Windows. Vamos a verlo en 10 segundos.",
+  "onb.2.title": "Seguro y reversible",
+  "onb.2.body": "Antes de optimizar, creamos un punto de restauración automático. Todos los ajustes se pueden revertir.",
+  "onb.3.title": "Optimiza con 1 clic",
+  "onb.3.body": "Elige un perfil (Recomendado, Gaming o Privacidad) y aplica decenas de ajustes de golpe.",
+  "onb.4.title": "Y mucho más",
+  "onb.4.body": "Quita bloatware, instala apps, repara Windows, gestiona el inicio y activa Windows. ¡Empecemos!",
+  "onb.skip": "Saltar",
+  "onb.next": "Siguiente",
+  "onb.start": "Empezar",
 };
 
 const en: Dict = {
@@ -272,6 +337,71 @@ const en: Dict = {
   "settings.repo": "GitHub repository",
   "settings.credits":
     "Inspired by winutil (Chris Titus), Optimizer (hellzerg) and MAS (massgravel).",
+
+  "nav.repair": "Repair Windows",
+  "nav.startup": "Startup",
+  "nav.network": "Network & DNS",
+
+  "opt.profiles": "Optimization profiles (1-click)",
+  "opt.allTweaks": "All tweaks",
+
+  "cleanup.browser": "Browser cache",
+  "cleanup.browserDesc": "Chrome, Edge, Brave and Firefox",
+  "cleanup.thumbs": "Thumbnails",
+  "cleanup.thumbsDesc": "Explorer thumbnail cache",
+  "cleanup.logs": "Windows logs",
+  "cleanup.logsDesc": "CBS and DISM logs",
+  "cleanup.print": "Print queue",
+  "cleanup.printDesc": "Stuck print jobs",
+  "cleanup.winsxs": "Old components (WinSxS)",
+  "cleanup.winsxsDesc": "Deep cleanup with DISM. May take several minutes.",
+
+  "install.searchPlaceholder": "Search the catalog or winget…",
+  "install.liveResults": "winget results",
+
+  "repair.title": "Repair Windows",
+  "repair.subtitle": "Fix corrupted system files and update problems.",
+  "repair.note": "These operations can take several minutes. Don't close the app while they run.",
+  "repair.started": "Started, this may take several minutes…",
+  "repair.running": "Running, please wait…",
+  "repair.sfc": "Check system files (SFC)",
+  "repair.sfcDesc": "Scans and repairs corrupted Windows files.",
+  "repair.dism": "Repair Windows image (DISM)",
+  "repair.dismDesc": "Repairs the component store. Requires internet.",
+  "repair.wu": "Reset Windows Update",
+  "repair.wuDesc": "Restarts update components and cache.",
+
+  "startup.title": "Startup programs",
+  "startup.subtitle": "Control which programs launch with Windows to speed up boot.",
+
+  "net.title": "Network & DNS",
+  "net.subtitle": "Change your connection's DNS servers. Google DNS is fast and reliable.",
+  "net.auto": "Automatic (DHCP)",
+  "net.autoDesc": "Use your provider / router DNS",
+  "net.note": "Changing DNS can improve browsing speed and name resolution. If you have connection issues, switch back to 'Automatic'.",
+
+  "settings.config": "Configuration",
+  "settings.configDesc": "Save your applied tweaks or import them on another PC.",
+  "settings.export": "Export",
+  "settings.import": "Import",
+  "settings.imported": "Configuration imported",
+  "settings.updates": "Updates",
+  "settings.checkUpdate": "Check for updates",
+  "settings.upToDate": "You're on the latest version ✅",
+  "settings.newVersion": "New version available:",
+  "settings.download": "Download",
+
+  "onb.1.title": "Welcome to PoxiOptimizer",
+  "onb.1.body": "The ultimate tool to optimize, clean and activate Windows. Let's take a 10-second tour.",
+  "onb.2.title": "Safe and reversible",
+  "onb.2.body": "Before optimizing, we create an automatic restore point. Every tweak can be reverted.",
+  "onb.3.title": "Optimize in 1 click",
+  "onb.3.body": "Pick a profile (Recommended, Gaming or Privacy) and apply dozens of tweaks at once.",
+  "onb.4.title": "And much more",
+  "onb.4.body": "Remove bloatware, install apps, repair Windows, manage startup and activate Windows. Let's go!",
+  "onb.skip": "Skip",
+  "onb.next": "Next",
+  "onb.start": "Start",
 };
 
 const dicts: Record<Lang, Dict> = { es, en };
