@@ -71,6 +71,7 @@ pub fn run() {
             debloat::postformat_debloat,
             // Apps (winget)
             apps::winget_available,
+            apps::ensure_winget,
             apps::install_app,
             apps::winget_search,
             apps::set_chrome_default,

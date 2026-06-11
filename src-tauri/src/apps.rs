@@ -82,10 +82,48 @@ fn parse_winget_table(text: &str) -> Vec<WingetResult> {
 /// Comprueba si winget esta disponible en el sistema.
 #[tauri::command(async)]
 pub fn winget_available() -> bool {
+    is_winget_available()
+}
+
+fn is_winget_available() -> bool {
     matches!(
         ps::run_powershell("if (Get-Command winget -ErrorAction SilentlyContinue) { 'yes' } else { 'no' }"),
         Ok(o) if o.stdout.trim() == "yes"
     )
+}
+
+/// Intenta instalar winget (App Installer) si no esta disponible.
+/// En Windows 11 Home/Pro suele estar preinstalado; en ediciones LTSC/IoT puede faltar.
+#[tauri::command(async)]
+pub fn ensure_winget() -> Result<String, String> {
+    if is_winget_available() {
+        return Ok("winget ya está disponible".to_string());
+    }
+    let script = r#"
+        $ErrorActionPreference = 'SilentlyContinue'
+        $progressPreference = 'SilentlyContinue'
+        try {
+            Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe
+        } catch {}
+        if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
+            try {
+                $api = Invoke-RestMethod 'https://api.github.com/repos/microsoft/winget-cli/releases/latest' -TimeoutSec 15
+                $bundle = $api.assets | Where-Object { $_.name -like '*.msixbundle' } | Select-Object -First 1
+                if ($bundle) {
+                    $tmp = Join-Path $env:TEMP 'winget_installer.msixbundle'
+                    Invoke-WebRequest $bundle.browser_download_url -OutFile $tmp -TimeoutSec 60
+                    Add-AppxPackage $tmp
+                }
+            } catch {}
+        }
+        Start-Sleep -Seconds 2
+    "#;
+    ps::run_powershell(script).ok();
+    if is_winget_available() {
+        Ok("winget instalado correctamente".to_string())
+    } else {
+        Err("winget no disponible. Instala 'App Installer' desde la Microsoft Store para poder instalar aplicaciones automáticamente.".to_string())
+    }
 }
 
 /// Instala una aplicacion por su id de winget de forma silenciosa.

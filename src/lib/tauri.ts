@@ -102,6 +102,7 @@ export const postformatDebloat = () => invoke<string[]>("postformat_debloat");
 
 /* Apps (winget) */
 export const wingetAvailable = () => invoke<boolean>("winget_available");
+export const ensureWinget = () => invoke<string>("ensure_winget");
 export const installApp = (wingetId: string) =>
   invoke<string>("install_app", { wingetId });
 export const wingetSearch = (query: string) =>

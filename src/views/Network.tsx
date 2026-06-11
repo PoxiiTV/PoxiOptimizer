@@ -8,6 +8,8 @@ export function Network() {
   const t = useT();
   const pushToast = useStore((s) => s.pushToast);
   const logAction = useStore((s) => s.logAction);
+  const showBusy = useStore((s) => s.showBusy);
+  const hideBusy = useStore((s) => s.hideBusy);
   const [applied, setApplied] = useState<string | null>(null);
   const [working, setWorking] = useState<string | null>(null);
 
@@ -19,7 +21,9 @@ export function Network() {
 
   const choose = async (id: string) => {
     if (working) return;
+    const opt = options.find((o) => o.id === id);
     setWorking(id);
+    showBusy(t("net.title"), `Aplicando ${opt?.title ?? id} en todos los adaptadores…`);
     try {
       const msg = await setDns(id);
       setApplied(id);
@@ -29,6 +33,7 @@ export function Network() {
       pushToast(String(e), "error");
     } finally {
       setWorking(null);
+      hideBusy();
     }
   };
 

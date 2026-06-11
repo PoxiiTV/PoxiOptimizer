@@ -33,6 +33,9 @@ export function Optimize() {
   const pushToast = useStore((s) => s.pushToast);
   const ensureRestorePoint = useStore((s) => s.ensureRestorePoint);
   const logAction = useStore((s) => s.logAction);
+  const showBusy = useStore((s) => s.showBusy);
+  const updateBusy = useStore((s) => s.updateBusy);
+  const hideBusy = useStore((s) => s.hideBusy);
   const [tweaks, setTweaks] = useState<TweakMeta[]>([]);
   const [states, setStates] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState<Record<string, boolean>>({});
@@ -84,11 +87,17 @@ export function Optimize() {
   };
 
   const applyProfile = async (profileId: string, ids: string[]) => {
+    const profile = PROFILES.find((p) => p.id === profileId);
+    const name = lang === "en" ? (profile?.nameEn ?? profileId) : (profile?.name ?? profileId);
     setApplyingProfile(profileId);
     await ensureRestorePoint();
     const pending = ids.filter((id) => !states[id]);
+    showBusy(`Aplicando perfil ${name}`, `Preparando ${pending.length} ajustes…`);
     let ok = 0;
-    for (const id of pending) {
+    for (let i = 0; i < pending.length; i++) {
+      const id = pending[i];
+      const tw = tweaks.find((t) => t.id === id);
+      updateBusy(`${tw?.title ?? id} (${i + 1}/${pending.length})`);
       try {
         await applyTweak(id);
         setStates((s) => ({ ...s, [id]: true }));
@@ -97,6 +106,7 @@ export function Optimize() {
         /* continúa con el resto */
       }
     }
+    hideBusy();
     setApplyingProfile(null);
     pushToast(`${ok} ${t("common.applied").toLowerCase()}`, "success");
     if (ok > 0) {

@@ -9,12 +9,22 @@ export function Activate() {
   const pushToast = useStore((s) => s.pushToast);
   const loadSystem = useStore((s) => s.loadSystem);
   const logAction = useStore((s) => s.logAction);
+  const showBusy = useStore((s) => s.showBusy);
+  const hideBusy = useStore((s) => s.hideBusy);
   const act = useStore((s) => s.activation);
   const [working, setWorking] = useState<string | null>(null);
 
+  const BUSY_SUBTITLES: Record<string, string> = {
+    win: "Contactando con los servidores de Microsoft…",
+    office: "Aplicando activación de Office (Ohook)…",
+    menu: "Abriendo el menú completo de MAS…",
+  };
+
   const run = async (key: string, fn: () => Promise<string>) => {
     if (working) return;
+    const action = actions.find((a) => a.key === key);
     setWorking(key);
+    showBusy(action?.title ?? key, BUSY_SUBTITLES[key] ?? "");
     try {
       const msg = await fn();
       pushToast(msg, msg.includes("✅") ? "success" : "info");
@@ -24,6 +34,7 @@ export function Activate() {
       pushToast(String(e), "error");
     } finally {
       setWorking(null);
+      hideBusy();
     }
   };
 

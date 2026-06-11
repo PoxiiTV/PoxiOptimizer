@@ -5,6 +5,7 @@ import { TitleBar } from "./components/TitleBar";
 import { Sidebar } from "./components/Sidebar";
 import { Toasts } from "./components/Toasts";
 import { RestoreOverlay } from "./components/RestoreOverlay";
+import { BusyOverlay } from "./components/BusyOverlay";
 import { Onboarding } from "./components/Onboarding";
 import { useStore } from "./store";
 
@@ -125,6 +126,7 @@ export default function App() {
 
       <Toasts />
       <RestoreOverlay />
+      <BusyOverlay />
       <Onboarding />
     </div>
   );

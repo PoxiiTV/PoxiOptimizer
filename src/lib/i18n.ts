@@ -34,7 +34,7 @@ const es: Dict = {
   "common.refresh": "Actualizar",
   "common.cancel": "Cancelar",
   "common.confirm": "Confirmar",
-  "common.working": "Trabajando…",
+  "common.working": "Aplicando…",
   "common.done": "Listo",
   "common.empty": "No hay nada que mostrar",
   "common.risky": "Bajo tu riesgo",
@@ -118,7 +118,7 @@ const es: Dict = {
   "activate.menuDesc": "Todas las opciones de activación y diagnóstico",
   "activate.disclaimer":
     "MAS es una herramienta de terceros (massgravel). Se descarga y ejecuta su script oficial. Úsalo bajo tu responsabilidad.",
-  "activate.working": "Procesando, espera un momento…",
+  "activate.working": "Contactando con los servidores, espera…",
 
   "wu.title": "Windows Update",
   "wu.subtitle":
@@ -339,7 +339,7 @@ const en: Dict = {
   "common.refresh": "Refresh",
   "common.cancel": "Cancel",
   "common.confirm": "Confirm",
-  "common.working": "Working…",
+  "common.working": "Applying…",
   "common.done": "Done",
   "common.empty": "Nothing to show",
   "common.risky": "At your own risk",

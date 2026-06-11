@@ -56,6 +56,11 @@ interface AppState {
   registryBackupDone: boolean;
   prepareStep: "restore" | "backup" | null;
   ensureRestorePoint: () => Promise<boolean>;
+  // Overlay bloqueante genérico para operaciones largas
+  busyOverlay: { title: string; subtitle: string } | null;
+  showBusy: (title: string, subtitle?: string) => void;
+  updateBusy: (subtitle: string) => void;
+  hideBusy: () => void;
   // Historial de acciones
   logAction: (entry: Omit<LogEntry, "id" | "timestamp">) => Promise<void>;
 }
@@ -97,6 +102,13 @@ export const useStore = create<AppState>((set, get) => ({
   restorePointDone: false,
   registryBackupDone: false,
   prepareStep: null,
+  busyOverlay: null,
+  showBusy: (title, subtitle = "") => set({ busyOverlay: { title, subtitle } }),
+  updateBusy: (subtitle) => {
+    const prev = get().busyOverlay;
+    if (prev) set({ busyOverlay: { ...prev, subtitle } });
+  },
+  hideBusy: () => set({ busyOverlay: null }),
   ensureRestorePoint: async () => {
     if (get().restorePointDone && get().registryBackupDone) return true;
 

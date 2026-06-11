@@ -22,6 +22,7 @@ import {
   createRestorePoint,
   postformatDebloat,
   applyTweak,
+  ensureWinget,
   installApp,
   setChromeDefault,
   setDns,
@@ -94,6 +95,12 @@ export function PostFormat() {
       label: t("pf.step.apps"),
       icon: Download,
       action: async () => {
+        // Verificar y/o instalar winget antes de las apps
+        try {
+          await ensureWinget();
+        } catch (e) {
+          return String(e);
+        }
         const total = POSTFORMAT_APPS.length;
         let ok = 0;
         for (let i = 0; i < total; i++) {
