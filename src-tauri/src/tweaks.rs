@@ -76,6 +76,8 @@ pub struct TweakMeta {
     title: String,
     description: String,
     recommended: bool,
+    /// Tweaks avanzados que pueden reducir seguridad/estabilidad (categoría Avanzado).
+    risky: bool,
 }
 
 // ---------------------------------------------------------------------------
@@ -487,6 +489,62 @@ $set = $all | Where-Object { (Get-ItemProperty -Path $_.PSPath -Name 'TcpAckFreq
                 reg(r"HKLM:\SOFTWARE\Policies\Microsoft\Dsh", "AllowNewsAndInterests", RegKind::Dword, "0", Some("1")),
             ]),
         },
+        // ----------------------- AVANZADO (BAJO TU PROPIO RIESGO) -----------------------
+        // Estos tweaks NO se recomiendan: pueden reducir la seguridad o requerir
+        // reinicio. Son reversibles, pero actívalos solo si sabes lo que haces.
+        Tweak {
+            id: "ultimate-performance",
+            category: "Avanzado",
+            title: "Plan de energía: Rendimiento máximo",
+            description: "Activa el plan oculto 'Ultimate Performance'. Maximiza el rendimiento a costa de mayor consumo. No recomendado en portátiles.",
+            recommended: false,
+            action: Action::Script {
+                apply: "powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61 | Out-Null; powercfg /setactive e9a42b02-d5df-448d-aa00-03f14749eb61",
+                revert: "powercfg /setactive 381b4222-f694-41f0-9685-ff5bb260df2e; powercfg -delete e9a42b02-d5df-448d-aa00-03f14749eb61 2>$null",
+                check: "((powercfg /getactivescheme) -match 'e9a42b02-d5df-448d-aa00-03f14749eb61')",
+            },
+        },
+        Tweak {
+            id: "disable-power-throttling",
+            category: "Avanzado",
+            title: "Desactivar Power Throttling",
+            description: "Impide que Windows limite la CPU de procesos en segundo plano. Más rendimiento, más consumo. Requiere reinicio.",
+            recommended: false,
+            action: Action::Registry(vec![
+                reg(r"HKLM:\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling", "PowerThrottlingOff", RegKind::Dword, "1", Some("0")),
+            ]),
+        },
+        Tweak {
+            id: "disable-spectre-meltdown",
+            category: "Avanzado",
+            title: "Desactivar mitigaciones Spectre/Meltdown",
+            description: "⚠️ Mejora el rendimiento de la CPU pero REDUCE LA SEGURIDAD frente a vulnerabilidades conocidas. Requiere reinicio. Úsalo bajo tu responsabilidad.",
+            recommended: false,
+            action: Action::Registry(vec![
+                reg(r"HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management", "FeatureSettingsOverride", RegKind::Dword, "3", None),
+                reg(r"HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management", "FeatureSettingsOverrideMask", RegKind::Dword, "3", None),
+            ]),
+        },
+        Tweak {
+            id: "disable-hvci",
+            category: "Avanzado",
+            title: "Desactivar Integridad de memoria (HVCI)",
+            description: "⚠️ Mejora el rendimiento (especialmente en juegos) pero REDUCE LA SEGURIDAD del kernel. Requiere reinicio. Úsalo bajo tu responsabilidad.",
+            recommended: false,
+            action: Action::Registry(vec![
+                reg(r"HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity", "Enabled", RegKind::Dword, "0", Some("1")),
+            ]),
+        },
+        Tweak {
+            id: "disable-uac",
+            category: "Avanzado",
+            title: "Desactivar Control de cuentas (UAC)",
+            description: "⚠️ Quita las ventanas de confirmación de administrador. REDUCE MUCHO LA SEGURIDAD del sistema. Requiere reinicio. Muy desaconsejado.",
+            recommended: false,
+            action: Action::Registry(vec![
+                reg(r"HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", "EnableLUA", RegKind::Dword, "0", Some("1")),
+            ]),
+        },
     ]
 }
 
@@ -512,6 +570,7 @@ pub fn get_tweaks() -> Vec<TweakMeta> {
             title: t.title.to_string(),
             description: t.description.to_string(),
             recommended: t.recommended,
+            risky: t.category == "Avanzado",
         })
         .collect()
 }

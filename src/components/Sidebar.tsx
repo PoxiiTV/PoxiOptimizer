@@ -6,6 +6,7 @@ import {
   Download,
   PackageX,
   Sparkles,
+  RefreshCcw,
   KeyRound,
   Settings,
   type LucideIcon,
@@ -38,6 +39,7 @@ const GROUPS: { titleKey: string; items: Item[] }[] = [
   {
     titleKey: "nav.group.other",
     items: [
+      { view: "wupdate", icon: RefreshCcw, labelKey: "nav.wupdate" },
       { view: "activate", icon: KeyRound, labelKey: "nav.activate" },
       { view: "settings", icon: Settings, labelKey: "nav.settings" },
     ],

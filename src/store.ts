@@ -4,6 +4,7 @@ import {
   getSystemInfo,
   getActivationStatus,
   isAdmin,
+  createRestorePoint,
   type SystemInfo,
   type ActivationStatus,
 } from "./lib/tauri";
@@ -15,6 +16,7 @@ export type View =
   | "install"
   | "uninstall"
   | "cleanup"
+  | "wupdate"
   | "activate"
   | "settings";
 
@@ -39,6 +41,10 @@ interface AppState {
   pushToast: (message: string, type?: Toast["type"]) => void;
   dismissToast: (id: number) => void;
   loadSystem: (force?: boolean) => void;
+  // Punto de restauración (seguridad antes de optimizar/limpiar)
+  restorePointDone: boolean;
+  creatingRestorePoint: boolean;
+  ensureRestorePoint: () => Promise<boolean>;
 }
 
 const storedLang = (localStorage.getItem("poxi.lang") as Lang) || "es";
@@ -74,6 +80,26 @@ export const useStore = create<AppState>((set, get) => ({
     isAdmin().then((v) => set({ isAdmin: v })).catch(() => {});
     getSystemInfo().then((i) => set({ systemInfo: i })).catch(() => {});
     getActivationStatus().then((a) => set({ activation: a })).catch(() => {});
+  },
+  restorePointDone: false,
+  creatingRestorePoint: false,
+  ensureRestorePoint: async () => {
+    if (get().restorePointDone) return true;
+    set({ creatingRestorePoint: true });
+    try {
+      await createRestorePoint("PoxiOptimizer - antes de optimizar");
+      set({ restorePointDone: true, creatingRestorePoint: false });
+      get().pushToast("Punto de restauración creado ✅", "success");
+      return true;
+    } catch {
+      // No bloqueamos el uso si System Restore no está disponible, pero avisamos.
+      set({ restorePointDone: true, creatingRestorePoint: false });
+      get().pushToast(
+        "No se pudo crear el punto de restauración (System Restore puede estar desactivado). Continúa con cuidado.",
+        "error",
+      );
+      return false;
+    }
   },
 }));
 

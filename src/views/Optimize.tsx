@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Gauge, Wand2 } from "lucide-react";
+import { Gauge, Wand2, AlertTriangle } from "lucide-react";
 import { Badge, Button, Card, CenterSpinner, PageHeader, Toggle } from "../components/ui";
 import { useStore, useT } from "../store";
 import {
@@ -10,11 +10,19 @@ import {
   type TweakMeta,
 } from "../lib/tauri";
 
-const CATEGORY_ORDER = ["Privacidad", "Rendimiento", "Red", "Interfaz", "Sistema"];
+const CATEGORY_ORDER = [
+  "Privacidad",
+  "Rendimiento",
+  "Red",
+  "Interfaz",
+  "Sistema",
+  "Avanzado",
+];
 
 export function Optimize() {
   const t = useT();
   const pushToast = useStore((s) => s.pushToast);
+  const ensureRestorePoint = useStore((s) => s.ensureRestorePoint);
   const [tweaks, setTweaks] = useState<TweakMeta[]>([]);
   const [states, setStates] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState<Record<string, boolean>>({});
@@ -43,6 +51,8 @@ export function Optimize() {
   }, [tweaks]);
 
   const toggle = async (tw: TweakMeta, next: boolean) => {
+    // Antes de aplicar cualquier cambio creamos un punto de restauración.
+    if (next) await ensureRestorePoint();
     setBusy((b) => ({ ...b, [tw.id]: true }));
     setStates((s) => ({ ...s, [tw.id]: next })); // optimista
     try {
@@ -58,6 +68,7 @@ export function Optimize() {
 
   const applyRecommended = async () => {
     setApplyingAll(true);
+    await ensureRestorePoint();
     const pending = tweaks.filter((tw) => tw.recommended && !states[tw.id]);
     for (const tw of pending) {
       try {
@@ -84,35 +95,51 @@ export function Optimize() {
       </div>
 
       <div className="flex flex-col gap-6">
-        {grouped.map((group) => (
-          <div key={group.category}>
-            <p className="text-sm font-semibold mb-2.5 text-[var(--color-text-muted)]">
-              {t(`opt.cat.${group.category}`)}
-            </p>
-            <Card className="divide-y divide-[var(--color-border)]">
-              {group.items.map((tw) => (
-                <div key={tw.id} className="flex items-center gap-4 p-4">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="font-medium text-sm">{tw.title}</p>
-                      {tw.recommended && (
-                        <Badge tone="accent">{t("common.recommended")}</Badge>
-                      )}
-                    </div>
-                    <p className="text-xs text-[var(--color-text-muted)] mt-0.5 leading-snug">
-                      {tw.description}
-                    </p>
-                  </div>
-                  <Toggle
-                    checked={!!states[tw.id]}
-                    disabled={busy[tw.id]}
-                    onChange={(v) => toggle(tw, v)}
-                  />
+        {grouped.map((group) => {
+          const advanced = group.category === "Avanzado";
+          return (
+            <div key={group.category}>
+              <p
+                className={`text-sm font-semibold mb-2.5 ${
+                  advanced ? "text-[var(--color-warning)]" : "text-[var(--color-text-muted)]"
+                }`}
+              >
+                {t(`opt.cat.${group.category}`)}
+              </p>
+
+              {advanced && (
+                <div className="glass rounded-xl p-3.5 mb-3 flex items-start gap-3 border-[var(--color-warning)]/30">
+                  <AlertTriangle size={18} className="text-[var(--color-warning)] shrink-0 mt-0.5" />
+                  <p className="text-xs text-[var(--color-text-muted)] leading-snug">
+                    {t("opt.riskWarning")}
+                  </p>
                 </div>
-              ))}
-            </Card>
-          </div>
-        ))}
+              )}
+
+              <Card className="divide-y divide-[var(--color-border)]">
+                {group.items.map((tw) => (
+                  <div key={tw.id} className="flex items-center gap-4 p-4">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-medium text-sm">{tw.title}</p>
+                        {tw.recommended && <Badge tone="accent">{t("common.recommended")}</Badge>}
+                        {tw.risky && <Badge tone="danger">{t("common.risky")}</Badge>}
+                      </div>
+                      <p className="text-xs text-[var(--color-text-muted)] mt-0.5 leading-snug">
+                        {tw.description}
+                      </p>
+                    </div>
+                    <Toggle
+                      checked={!!states[tw.id]}
+                      disabled={busy[tw.id]}
+                      onChange={(v) => toggle(tw, v)}
+                    />
+                  </div>
+                ))}
+              </Card>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

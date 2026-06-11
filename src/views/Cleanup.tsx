@@ -7,6 +7,7 @@ import { runCleanup } from "../lib/tauri";
 export function Cleanup() {
   const t = useT();
   const pushToast = useStore((s) => s.pushToast);
+  const ensureRestorePoint = useStore((s) => s.ensureRestorePoint);
   const [opts, setOpts] = useState({
     temp: true,
     update: true,
@@ -26,6 +27,7 @@ export function Cleanup() {
   const run = async () => {
     setWorking(true);
     setFreed(null);
+    await ensureRestorePoint();
     try {
       const res = await runCleanup(opts.temp, opts.update, opts.recycle, opts.dns);
       setFreed(res.freed_mb);

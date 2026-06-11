@@ -1,4 +1,5 @@
-import { KeyRound, Monitor, FileText, ListChecks, ShieldCheck, ShieldAlert } from "lucide-react";
+import { useState } from "react";
+import { KeyRound, Monitor, FileText, ListChecks, ShieldCheck, ShieldAlert, Loader2 } from "lucide-react";
 import { Card, PageHeader } from "../components/ui";
 import { useStore, useT } from "../store";
 import { activateWindows, activateOffice, openMasMenu } from "../lib/tauri";
@@ -6,21 +7,28 @@ import { activateWindows, activateOffice, openMasMenu } from "../lib/tauri";
 export function Activate() {
   const t = useT();
   const pushToast = useStore((s) => s.pushToast);
+  const loadSystem = useStore((s) => s.loadSystem);
   const act = useStore((s) => s.activation);
+  const [working, setWorking] = useState<string | null>(null);
 
-  const run = async (fn: () => Promise<string>) => {
+  const run = async (key: string, fn: () => Promise<string>) => {
+    if (working) return;
+    setWorking(key);
     try {
       const msg = await fn();
-      pushToast(msg, "info");
+      pushToast(msg, msg.includes("✅") ? "success" : "info");
+      loadSystem(true); // refresca el estado de activación cacheado
     } catch (e) {
       pushToast(String(e), "error");
+    } finally {
+      setWorking(null);
     }
   };
 
   const actions = [
-    { icon: Monitor, title: t("activate.windows"), desc: t("activate.windowsDesc"), fn: activateWindows, primary: true },
-    { icon: FileText, title: t("activate.office"), desc: t("activate.officeDesc"), fn: activateOffice },
-    { icon: ListChecks, title: t("activate.menu"), desc: t("activate.menuDesc"), fn: openMasMenu },
+    { key: "win", icon: Monitor, title: t("activate.windows"), desc: t("activate.windowsDesc"), fn: activateWindows, primary: true },
+    { key: "office", icon: FileText, title: t("activate.office"), desc: t("activate.officeDesc"), fn: activateOffice },
+    { key: "menu", icon: ListChecks, title: t("activate.menu"), desc: t("activate.menuDesc"), fn: openMasMenu },
   ];
 
   return (
@@ -51,9 +59,10 @@ export function Activate() {
       <div className="grid grid-cols-1 gap-3">
         {actions.map((a) => (
           <button
-            key={a.title}
-            onClick={() => run(a.fn)}
-            className={`glass rounded-2xl p-4 flex items-center gap-4 text-left hover:bg-[var(--color-surface-hover)] transition-colors ${
+            key={a.key}
+            onClick={() => run(a.key, a.fn)}
+            disabled={working !== null}
+            className={`glass rounded-2xl p-4 flex items-center gap-4 text-left hover:bg-[var(--color-surface-hover)] transition-colors disabled:opacity-60 ${
               a.primary ? "border-[var(--color-accent)]/40" : ""
             }`}
           >
@@ -62,11 +71,17 @@ export function Activate() {
                 a.primary ? "accent-gradient" : "bg-white/6"
               }`}
             >
-              <a.icon size={21} className={a.primary ? "text-white" : "text-[var(--color-accent)]"} />
+              {working === a.key ? (
+                <Loader2 size={21} className="animate-spin-slow text-white" />
+              ) : (
+                <a.icon size={21} className={a.primary ? "text-white" : "text-[var(--color-accent)]"} />
+              )}
             </div>
             <div>
               <p className="font-medium text-sm">{a.title}</p>
-              <p className="text-xs text-[var(--color-text-muted)]">{a.desc}</p>
+              <p className="text-xs text-[var(--color-text-muted)]">
+                {working === a.key ? t("activate.working") : a.desc}
+              </p>
             </div>
           </button>
         ))}

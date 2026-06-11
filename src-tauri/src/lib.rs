@@ -9,6 +9,7 @@ mod ps;
 mod system;
 mod tweaks;
 mod uninstall;
+mod wupdate;
 
 /// En release, si la app no esta elevada, se relanza solicitando permisos de
 /// administrador (UAC) y el proceso actual termina. En desarrollo se omite para
@@ -68,6 +69,9 @@ pub fn run() {
             activation::open_mas_menu,
             // Limpieza
             cleanup::run_cleanup,
+            // Windows Update
+            wupdate::get_windows_update_mode,
+            wupdate::set_windows_update_mode,
         ])
         .run(tauri::generate_context!())
         .expect("error al ejecutar PoxiOptimizer");

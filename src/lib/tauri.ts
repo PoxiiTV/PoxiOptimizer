@@ -33,6 +33,7 @@ export interface TweakMeta {
   title: string;
   description: string;
   recommended: boolean;
+  risky: boolean;
 }
 
 export interface AppxItem {
@@ -91,6 +92,12 @@ export const uninstallProgram = (id: string, source: string) =>
 export const activateWindows = () => invoke<string>("activate_windows");
 export const activateOffice = () => invoke<string>("activate_office");
 export const openMasMenu = () => invoke<string>("open_mas_menu");
+
+/* Windows Update */
+export const getWindowsUpdateMode = () =>
+  invoke<string>("get_windows_update_mode");
+export const setWindowsUpdateMode = (mode: string) =>
+  invoke<string>("set_windows_update_mode", { mode });
 
 /* Limpieza */
 export const runCleanup = (

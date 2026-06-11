@@ -14,6 +14,7 @@ const es: Dict = {
   "nav.install": "Instalar apps",
   "nav.uninstall": "Desinstalador",
   "nav.cleanup": "Limpieza",
+  "nav.wupdate": "Windows Update",
   "nav.activate": "Activación",
   "nav.settings": "Ajustes",
   "nav.group.system": "Sistema",
@@ -36,6 +37,8 @@ const es: Dict = {
   "common.working": "Trabajando…",
   "common.done": "Listo",
   "common.empty": "No hay nada que mostrar",
+  "common.risky": "Bajo tu riesgo",
+  "common.uninstallSelected": "Desinstalar seleccionados",
 
   "admin.warning.title": "Sin permisos de administrador",
   "admin.warning.body":
@@ -67,6 +70,9 @@ const es: Dict = {
   "opt.cat.Red": "Red",
   "opt.cat.Interfaz": "Interfaz",
   "opt.cat.Sistema": "Sistema",
+  "opt.cat.Avanzado": "Avanzado · bajo tu propio riesgo",
+  "opt.riskWarning":
+    "⚠️ Estos ajustes son para usuarios avanzados. Pueden reducir la seguridad o requerir reinicio. El programa NO los recomienda; actívalos solo si sabes lo que haces.",
 
   "debloat.title": "Quitar bloatware",
   "debloat.subtitle":
@@ -112,6 +118,19 @@ const es: Dict = {
   "activate.menuDesc": "Todas las opciones de activación y diagnóstico",
   "activate.disclaimer":
     "MAS es una herramienta de terceros (massgravel). Se descarga y ejecuta su script oficial. Úsalo bajo tu responsabilidad.",
+  "activate.working": "Procesando, espera un momento…",
+
+  "wu.title": "Windows Update",
+  "wu.subtitle":
+    "Controla cómo recibe tu equipo las actualizaciones de Windows.",
+  "wu.default": "Por defecto",
+  "wu.defaultDesc": "Comportamiento estándar de Windows: recibe todas las actualizaciones automáticamente.",
+  "wu.security": "Solo seguridad (recomendado)",
+  "wu.securityDesc": "Aplaza las actualizaciones de características hasta 1 año y aplica solo parches de seguridad y calidad. Más estable.",
+  "wu.disabled": "Deshabilitado",
+  "wu.disabledDesc": "Desactiva por completo Windows Update. No recomendado: dejarás de recibir parches de seguridad.",
+  "wu.note":
+    "El modo 'Solo seguridad' es la opción ideal para la mayoría: mantiene tu equipo protegido sin actualizaciones de funciones que pueden dar problemas. Siempre puedes volver a 'Por defecto'.",
 
   "settings.title": "Ajustes",
   "settings.language": "Idioma",
@@ -131,6 +150,7 @@ const en: Dict = {
   "nav.install": "Install apps",
   "nav.uninstall": "Uninstaller",
   "nav.cleanup": "Cleanup",
+  "nav.wupdate": "Windows Update",
   "nav.activate": "Activation",
   "nav.settings": "Settings",
   "nav.group.system": "System",
@@ -153,6 +173,8 @@ const en: Dict = {
   "common.working": "Working…",
   "common.done": "Done",
   "common.empty": "Nothing to show",
+  "common.risky": "At your own risk",
+  "common.uninstallSelected": "Uninstall selected",
 
   "admin.warning.title": "No administrator rights",
   "admin.warning.body": "Some actions may fail. Restart the app as administrator.",
@@ -182,6 +204,9 @@ const en: Dict = {
   "opt.cat.Red": "Network",
   "opt.cat.Interfaz": "Interface",
   "opt.cat.Sistema": "System",
+  "opt.cat.Avanzado": "Advanced · at your own risk",
+  "opt.riskWarning":
+    "⚠️ These settings are for advanced users. They may reduce security or require a restart. The app does NOT recommend them; enable only if you know what you're doing.",
 
   "debloat.title": "Remove bloatware",
   "debloat.subtitle":
@@ -226,6 +251,18 @@ const en: Dict = {
   "activate.menuDesc": "All activation and troubleshooting options",
   "activate.disclaimer":
     "MAS is a third-party tool (massgravel). Its official script is downloaded and run. Use at your own risk.",
+  "activate.working": "Processing, please wait…",
+
+  "wu.title": "Windows Update",
+  "wu.subtitle": "Control how your PC receives Windows updates.",
+  "wu.default": "Default",
+  "wu.defaultDesc": "Standard Windows behavior: receives all updates automatically.",
+  "wu.security": "Security only (recommended)",
+  "wu.securityDesc": "Defers feature updates up to 1 year and applies only security and quality patches. More stable.",
+  "wu.disabled": "Disabled",
+  "wu.disabledDesc": "Completely turns off Windows Update. Not recommended: you'll stop receiving security patches.",
+  "wu.note":
+    "'Security only' is the ideal option for most users: it keeps your PC protected without feature updates that can cause issues. You can always switch back to 'Default'.",
 
   "settings.title": "Settings",
   "settings.language": "Language",

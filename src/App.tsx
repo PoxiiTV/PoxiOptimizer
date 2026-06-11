@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { TitleBar } from "./components/TitleBar";
 import { Sidebar } from "./components/Sidebar";
 import { Toasts } from "./components/Toasts";
+import { RestoreOverlay } from "./components/RestoreOverlay";
 import { useStore } from "./store";
 
 import { Dashboard } from "./views/Dashboard";
@@ -11,6 +12,7 @@ import { Debloat } from "./views/Debloat";
 import { Install } from "./views/Install";
 import { Uninstall } from "./views/Uninstall";
 import { Cleanup } from "./views/Cleanup";
+import { WindowsUpdate } from "./views/WindowsUpdate";
 import { Activate } from "./views/Activate";
 import { Settings } from "./views/Settings";
 
@@ -21,6 +23,7 @@ const VIEWS = {
   install: Install,
   uninstall: Uninstall,
   cleanup: Cleanup,
+  wupdate: WindowsUpdate,
   activate: Activate,
   settings: Settings,
 };
@@ -86,6 +89,7 @@ export default function App() {
       </div>
 
       <Toasts />
+      <RestoreOverlay />
     </div>
   );
 }
