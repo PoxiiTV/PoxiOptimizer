@@ -13,6 +13,8 @@
 
 *Interfaz glassmorphism · ejecutable ligero · 100 % seguro y reversible*
 
+![PoxiOptimizer screenshot](assets/screenshot.png)
+
 </div>
 
 ---
