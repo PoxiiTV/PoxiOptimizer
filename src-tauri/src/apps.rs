@@ -176,25 +176,38 @@ pub fn install_app(winget_id: String) -> Result<String, String> {
 
 /// Descarga el instalador de Ninite desde la URL proporcionada y lo ejecuta.
 /// Solo se permiten URLs del dominio oficial ninite.com.
+///
+/// La descarga se hace via PowerShell, pero la ejecucion se lanza directamente
+/// desde Rust para que Ninite herede el escritorio interactivo del proceso admin
+/// y pueda escribir en Program Files sin "Access is denied".
 #[tauri::command(async)]
 pub fn install_apps_ninite(url: String) -> Result<String, String> {
     if !url.starts_with("https://ninite.com/") || !url.ends_with("/ninite.exe") {
         return Err("URL de Ninite no válida".to_string());
     }
+
+    // 1. Descargar ninite.exe via PowerShell
+    let tmp = std::env::temp_dir().join("poxi_ninite.exe");
+    let tmp_ps = tmp.to_string_lossy().replace('\'', "''");
     let safe_url = url.replace('\'', "''");
-    let script = format!(
-        r#"
-        $progressPreference = 'SilentlyContinue'
-        $ErrorActionPreference = 'Stop'
-        $tmp = Join-Path $env:TEMP 'poxi_ninite.exe'
-        Invoke-WebRequest -Uri '{url}' -OutFile $tmp -TimeoutSec 300 -UseBasicParsing
-        if (-not (Test-Path $tmp)) {{ throw 'No se pudo descargar Ninite' }}
-        Start-Process $tmp -Wait -WindowStyle Minimized
-        Remove-Item $tmp -Force -ErrorAction SilentlyContinue
-        "#,
-        url = safe_url
+    let download = format!(
+        "$progressPreference='SilentlyContinue'; Invoke-WebRequest -Uri '{url}' -OutFile '{out}' -TimeoutSec 300 -UseBasicParsing",
+        url = safe_url,
+        out = tmp_ps
     );
-    ps::run_powershell(&script)?;
+    ps::run_powershell(&download)?;
+
+    if !tmp.exists() {
+        return Err("No se pudo descargar Ninite".to_string());
+    }
+
+    // 2. Ejecutar directamente (no a traves de PowerShell oculto) para que
+    //    Ninite tenga acceso al escritorio interactivo y permisos de escritura.
+    let _ = std::process::Command::new(&tmp)
+        .status()
+        .map_err(|e| format!("No se pudo ejecutar Ninite: {e}"))?;
+
+    let _ = std::fs::remove_file(&tmp);
     Ok("Apps instaladas correctamente".to_string())
 }
 
