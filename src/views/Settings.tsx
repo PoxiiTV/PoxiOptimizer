@@ -224,7 +224,7 @@ export function Settings() {
       {/* Actualizaciones */}
       <Card className="p-5 mb-4">
         <p className="text-sm font-semibold mb-1">{t("settings.updates")}</p>
-        <p className="text-xs text-[var(--color-text-muted)] mb-3.5">v3.5.1</p>
+        <p className="text-xs text-[var(--color-text-muted)] mb-3.5">v3.5.2</p>
         {update?.update_available ? (
           <div className="glass rounded-xl p-3.5 mb-3 flex items-center gap-3 border-[var(--color-success)]/30">
             <Sparkles size={18} className="text-[var(--color-success)] shrink-0" />
@@ -324,7 +324,7 @@ export function Settings() {
           <div>
             <p className="font-semibold">
               Poxi<span className="text-gradient">Optimizer</span>{" "}
-              <span className="text-xs text-[var(--color-text-dim)] font-normal">v3.5.1</span>
+              <span className="text-xs text-[var(--color-text-dim)] font-normal">v3.5.2</span>
             </p>
             <p className="text-xs text-[var(--color-text-muted)]">{t("settings.aboutBody")}</p>
           </div>

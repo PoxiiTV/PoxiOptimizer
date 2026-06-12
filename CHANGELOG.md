@@ -4,6 +4,22 @@ Todas las versiones notables de PoxiOptimizer. / All notable versions of PoxiOpt
 
 ---
 
+## [3.5.2] — 2026-06-12
+
+### 🇪🇸 Español
+
+#### ✨ Novedades
+- **Overlay de carga en toda la app** — el overlay bloqueante con spinner ahora aparece en todas las operaciones largas: Reparar Windows (SFC/DISM/Reset), Características de Windows, Limpieza, Quitar bloatware, Desinstalador, Instalar apps (lote), Windows Update y la optimización rápida del Dashboard.
+- La acción rápida "Optimización recomendada" del Dashboard ahora aplica los tweaks directamente (con overlay y progreso en tiempo real) en lugar de solo navegar a la sección.
+
+### 🇬🇧 English
+
+#### ✨ What's new
+- **Loading overlay across the whole app** — the blocking overlay with spinner now appears for all long operations: Repair Windows (SFC/DISM/Reset), Windows Features, Cleanup, Remove bloatware, Uninstaller, Install apps (batch), Windows Update and the Dashboard quick optimize action.
+- The "Recommended optimization" quick action on the Dashboard now applies tweaks directly (with overlay and real-time progress) instead of just navigating to the section.
+
+---
+
 ## [3.5.1] — 2026-06-12
 
 ### 🇪🇸 Español

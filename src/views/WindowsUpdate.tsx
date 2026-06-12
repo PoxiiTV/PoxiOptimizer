@@ -10,6 +10,8 @@ export function WindowsUpdate() {
   const t = useT();
   const pushToast = useStore((s) => s.pushToast);
   const logAction = useStore((s) => s.logAction);
+  const showBusy = useStore((s) => s.showBusy);
+  const hideBusy = useStore((s) => s.hideBusy);
   const [mode, setMode] = useState<Mode | null>(null);
   const [applying, setApplying] = useState<Mode | null>(null);
 
@@ -45,7 +47,9 @@ export function WindowsUpdate() {
 
   const choose = async (m: Mode) => {
     if (m === mode || applying) return;
+    const opt = options.find((o) => o.id === m);
     setApplying(m);
+    showBusy(t("wu.title"), `Aplicando: ${opt?.title ?? m}…`);
     try {
       await setWindowsUpdateMode(m);
       setMode(m);
@@ -55,6 +59,7 @@ export function WindowsUpdate() {
       pushToast(String(e), "error");
     } finally {
       setApplying(null);
+      hideBusy();
     }
   };
 

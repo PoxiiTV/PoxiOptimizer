@@ -16,6 +16,9 @@ import { listPrograms, uninstallProgram, type Program } from "../lib/tauri";
 export function Uninstall() {
   const t = useT();
   const pushToast = useStore((s) => s.pushToast);
+  const showBusy = useStore((s) => s.showBusy);
+  const updateBusy = useStore((s) => s.updateBusy);
+  const hideBusy = useStore((s) => s.hideBusy);
   const [programs, setPrograms] = useState<Program[]>([]);
   const [sel, setSel] = useState<Set<string>>(new Set());
   const [query, setQuery] = useState("");
@@ -59,9 +62,12 @@ export function Uninstall() {
   const doUninstall = async () => {
     setConfirm(false);
     const targets = programs.filter((p) => sel.has(p.id));
+    showBusy(t("uninstall.title"), `Desinstalando ${targets.length} programa${targets.length !== 1 ? "s" : ""}…`);
     let ok = 0;
-    for (const p of targets) {
+    for (let i = 0; i < targets.length; i++) {
+      const p = targets[i];
       setBusyId(p.id);
+      updateBusy(`${p.name} (${i + 1}/${targets.length})`);
       try {
         await uninstallProgram(p.id, p.source);
         setPrograms((prev) => prev.filter((x) => x.id !== p.id));
@@ -71,6 +77,7 @@ export function Uninstall() {
       }
     }
     setBusyId(null);
+    hideBusy();
     setSel(new Set());
     pushToast(`${ok}/${targets.length} ${t("common.done").toLowerCase()}`, ok ? "success" : "error");
   };

@@ -52,7 +52,7 @@
 
 ### 🚀 Instalación
 
-1. Descarga el instalador `PoxiOptimizer_3.5.1_x64-setup.exe` desde la pestaña [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases).
+1. Descarga el instalador `PoxiOptimizer_3.5.2_x64-setup.exe` desde la pestaña [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases).
 2. Ejecútalo y sigue el asistente.
 3. Abre **PoxiOptimizer** y acepta el aviso de administrador.
 
@@ -105,7 +105,7 @@ npm run tauri build    # genera el instalador en src-tauri/target/release/bundle
 
 ### 🚀 Installation
 
-1. Download `PoxiOptimizer_3.5.1_x64-setup.exe` from the [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases) tab.
+1. Download `PoxiOptimizer_3.5.2_x64-setup.exe` from the [Releases](https://github.com/PoxiiTV/PoxiOptimizer/releases) tab.
 2. Run it and follow the wizard.
 3. Open **PoxiOptimizer** and accept the administrator prompt.
 

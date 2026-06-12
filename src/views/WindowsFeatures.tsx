@@ -13,6 +13,8 @@ import {
 export function WindowsFeatures() {
   const t = useT();
   const pushToast = useStore((s) => s.pushToast);
+  const showBusy = useStore((s) => s.showBusy);
+  const hideBusy = useStore((s) => s.hideBusy);
   const [features, setFeatures] = useState<WinFeature[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -32,6 +34,8 @@ export function WindowsFeatures() {
 
   const toggle = async (feat: WinFeature) => {
     setBusy(feat.id);
+    const action = feat.enabled ? t("winfeatures.disable") : t("winfeatures.enable");
+    showBusy(`${action}: ${feat.name}`, feat.restart ? "Puede requerir reinicio al terminar." : "Aplicando cambios en el sistema…");
     try {
       const msg = feat.enabled
         ? await disableWindowsFeature(feat.id)
@@ -42,6 +46,7 @@ export function WindowsFeatures() {
       pushToast(String(e), "error");
     } finally {
       setBusy(null);
+      hideBusy();
     }
   };
 

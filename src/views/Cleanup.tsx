@@ -31,6 +31,8 @@ export function Cleanup() {
   const pushToast = useStore((s) => s.pushToast);
   const ensureRestorePoint = useStore((s) => s.ensureRestorePoint);
   const logAction = useStore((s) => s.logAction);
+  const showBusy = useStore((s) => s.showBusy);
+  const hideBusy = useStore((s) => s.hideBusy);
   const [opts, setOpts] = useState<Record<Key, boolean>>({
     temp: true,
     update_cache: true,
@@ -61,6 +63,11 @@ export function Cleanup() {
     setWorking(true);
     setFreed(null);
     await ensureRestorePoint();
+    const winsxs = opts.winsxs;
+    showBusy(
+      t("cleanup.title"),
+      winsxs ? "Limpiando el sistema. WinSxS puede tardar varios minutos…" : "Borrando temporales, caché y archivos innecesarios…"
+    );
     try {
       const selected = (Object.keys(opts) as Key[]).filter((k) => opts[k]);
       const res = await runCleanup(selected);
@@ -71,6 +78,7 @@ export function Cleanup() {
       pushToast(String(e), "error");
     } finally {
       setWorking(false);
+      hideBusy();
     }
   };
 

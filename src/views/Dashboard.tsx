@@ -19,7 +19,8 @@ import {
 } from "lucide-react";
 import { Card } from "../components/ui";
 import { useStore, useT } from "../store";
-import { createRestorePoint, getTemperatures, type TempInfo } from "../lib/tauri";
+import { createRestorePoint, getTemperatures, checkAllTweaks, applyTweak, type TempInfo } from "../lib/tauri";
+import { PROFILES } from "../data/profiles";
 import { openUrl } from "@tauri-apps/plugin-opener";
 
 const RUXI_URL = "https://github.com/PoxiiTV/Ruxi-Custom-Rufus/releases/latest";
@@ -64,10 +65,15 @@ export function Dashboard() {
   const t = useT();
   const setView = useStore((s) => s.setView);
   const pushToast = useStore((s) => s.pushToast);
+  const ensureRestorePoint = useStore((s) => s.ensureRestorePoint);
+  const showBusy = useStore((s) => s.showBusy);
+  const updateBusy = useStore((s) => s.updateBusy);
+  const hideBusy = useStore((s) => s.hideBusy);
   const isAdmin = useStore((s) => s.isAdmin);
   const info = useStore((s) => s.systemInfo);
   const act = useStore((s) => s.activation);
   const [restoring, setRestoring] = useState(false);
+  const [optimizing, setOptimizing] = useState(false);
   const [temps, setTemps] = useState<TempInfo | null>(null);
 
   useEffect(() => {
@@ -89,6 +95,26 @@ export function Dashboard() {
     }
   };
 
+  const doOptimize = async () => {
+    if (optimizing) return;
+    setOptimizing(true);
+    await ensureRestorePoint();
+    const recommended = PROFILES.find((p) => p.id === "recommended");
+    if (!recommended) { setOptimizing(false); return; }
+    const states = await checkAllTweaks();
+    const pending = recommended.tweaks.filter((id) => !states[id]);
+    showBusy(t("dash.quick.optimize"), `Preparando ${pending.length} ajustes…`);
+    let ok = 0;
+    for (let i = 0; i < pending.length; i++) {
+      const id = pending[i];
+      updateBusy(`${id} (${i + 1}/${pending.length})`);
+      try { await applyTweak(id); ok++; } catch { /* sigue */ }
+    }
+    hideBusy();
+    setOptimizing(false);
+    pushToast(`${ok} ajustes aplicados ✅`, "success");
+  };
+
   const quick = [
     {
       icon: History,
@@ -101,7 +127,8 @@ export function Dashboard() {
       icon: Gauge,
       title: t("dash.quick.optimize"),
       desc: t("dash.quick.optimizeDesc"),
-      onClick: () => setView("optimize"),
+      onClick: doOptimize,
+      loading: optimizing,
     },
     {
       icon: Sparkles,

@@ -17,6 +17,9 @@ import { listAppx, removeAppx, type AppxItem } from "../lib/tauri";
 export function Debloat() {
   const t = useT();
   const pushToast = useStore((s) => s.pushToast);
+  const showBusy = useStore((s) => s.showBusy);
+  const updateBusy = useStore((s) => s.updateBusy);
+  const hideBusy = useStore((s) => s.hideBusy);
   const [apps, setApps] = useState<AppxItem[]>([]);
   const [sel, setSel] = useState<Set<string>>(new Set());
   const [query, setQuery] = useState("");
@@ -64,8 +67,12 @@ export function Debloat() {
     setConfirm(false);
     setWorking(true);
     const targets = [...sel];
+    showBusy(t("debloat.title"), `Eliminando ${targets.length} aplicación${targets.length !== 1 ? "es" : ""}…`);
     let ok = 0;
-    for (const name of targets) {
+    for (let i = 0; i < targets.length; i++) {
+      const name = targets[i];
+      const display = apps.find((a) => a.name === name)?.display ?? name;
+      updateBusy(`${display} (${i + 1}/${targets.length})`);
       try {
         await removeAppx(name);
         ok++;
@@ -74,6 +81,7 @@ export function Debloat() {
       }
     }
     setWorking(false);
+    hideBusy();
     setSel(new Set());
     pushToast(`${ok}/${targets.length} ${t("common.done").toLowerCase()}`, ok ? "success" : "error");
     load().catch(() => {});

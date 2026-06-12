@@ -8,13 +8,21 @@ export function Repair() {
   const t = useT();
   const pushToast = useStore((s) => s.pushToast);
   const logAction = useStore((s) => s.logAction);
+  const showBusy = useStore((s) => s.showBusy);
+  const hideBusy = useStore((s) => s.hideBusy);
   const [working, setWorking] = useState<string | null>(null);
+
+  const SUBTITLES: Record<string, string> = {
+    sfc: "Analizando y reparando archivos del sistema…",
+    dism: "Reparando la imagen de Windows. Puede tardar varios minutos…",
+    wu: "Reiniciando los servicios de Windows Update…",
+  };
 
   const run = async (key: string, label: string, fn: () => Promise<string>) => {
     if (working) return;
     setWorking(key);
+    showBusy(label, SUBTITLES[key] ?? "");
     try {
-      pushToast(t("repair.started"), "info");
       const msg = await fn();
       pushToast(msg, "success");
       await logAction({ kind: "repair", label: `Reparación: ${label}`, can_undo: false });
@@ -22,6 +30,7 @@ export function Repair() {
       pushToast(String(e), "error");
     } finally {
       setWorking(null);
+      hideBusy();
     }
   };
 

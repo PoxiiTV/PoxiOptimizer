@@ -17,6 +17,9 @@ type Status = "idle" | "installing" | "done" | "error";
 export function Install() {
   const t = useT();
   const pushToast = useStore((s) => s.pushToast);
+  const showBusy = useStore((s) => s.showBusy);
+  const updateBusy = useStore((s) => s.updateBusy);
+  const hideBusy = useStore((s) => s.hideBusy);
   const [available, setAvailable] = useState<boolean | null>(null);
   const [sel, setSel] = useState<Set<string>>(new Set());
   const [status, setStatus] = useState<Record<string, Status>>({});
@@ -77,9 +80,17 @@ export function Install() {
   };
 
   const installSelected = async () => {
+    const targets = [...sel];
     setWorking(true);
-    for (const id of [...sel]) await installOne(id);
+    showBusy(t("install.title"), `Instalando ${targets.length} aplicación${targets.length !== 1 ? "es" : ""}…`);
+    for (let i = 0; i < targets.length; i++) {
+      const id = targets[i];
+      const name = APPS.find((a) => a.id === id)?.name ?? id;
+      updateBusy(`${name} (${i + 1}/${targets.length})`);
+      await installOne(id);
+    }
     setWorking(false);
+    hideBusy();
     setSel(new Set());
   };
 
