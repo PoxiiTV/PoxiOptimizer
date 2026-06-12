@@ -74,6 +74,7 @@ pub fn run() {
             apps::ensure_winget,
             apps::install_app,
             apps::winget_search,
+            apps::install_apps_ninite,
             apps::set_chrome_default,
             // Desinstalador
             uninstall::list_programs,

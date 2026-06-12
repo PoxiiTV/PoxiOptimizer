@@ -1,5 +1,5 @@
-/* Apps que instala el modo Post-Formateo (configuración personal de Poxi:
-   gaming + utilidades esenciales). IDs exactos de winget. */
+/* Apps que instala el modo Post-Formateo.
+   La instalación usa Ninite — no requiere winget ni Microsoft Store. */
 
 export interface PostApp {
   id: string;
@@ -7,19 +7,21 @@ export interface PostApp {
 }
 
 export const POSTFORMAT_APPS: PostApp[] = [
-  { id: "Google.Chrome", name: "Google Chrome" },
-  { id: "Discord.Discord", name: "Discord" },
-  { id: "WhatsApp.WhatsApp", name: "WhatsApp" },
-  { id: "Telegram.TelegramDesktop", name: "Telegram" },
-  { id: "Spotify.Spotify", name: "Spotify" },
-  { id: "VideoLAN.VLC", name: "VLC" },
-  { id: "voidtools.Everything", name: "Everything" },
-  { id: "RARLab.WinRAR", name: "WinRAR" },
-  { id: "Microsoft.PowerToys", name: "PowerToys" },
-  { id: "Python.Python.3.12", name: "Python 3.12" },
-  { id: "Oracle.JavaRuntimeEnvironment", name: "Java" },
-  { id: "OpenJS.NodeJS", name: "Node.js" },
-  { id: "Valve.Steam", name: "Steam" },
-  { id: "EpicGames.EpicGamesLauncher", name: "Epic Games" },
-  { id: "Malwarebytes.Malwarebytes", name: "Malwarebytes" },
+  { id: "chrome",       name: "Google Chrome" },
+  { id: "discord",      name: "Discord" },
+  { id: "aimp",         name: "AIMP" },
+  { id: "spotify",      name: "Spotify" },
+  { id: "vlc",          name: "VLC" },
+  { id: "filezilla",    name: "FileZilla" },
+  { id: "everything",   name: "Everything" },
+  { id: "winrar",       name: "WinRAR" },
+  { id: "python3",      name: "Python 3" },
+  { id: "adoptjavax21", name: "Java JRE 21 (Adoptium)" },
+  { id: "adoptjdkx21",  name: "Java JDK 21 (Adoptium)" },
+  { id: "steam",        name: "Steam" },
+  { id: "epic",         name: "Epic Games" },
+  { id: "malwarebytes", name: "Malwarebytes" },
 ];
+
+export const NINITE_URL =
+  "https://ninite.com/adoptjavax21-adoptjdkx21-aimp-chrome-discord-epic-everything-filezilla-malwarebytes-python3-spotify-steam-vlc-winrar/ninite.exe";

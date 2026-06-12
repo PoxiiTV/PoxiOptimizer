@@ -22,8 +22,7 @@ import {
   createRestorePoint,
   postformatDebloat,
   applyTweak,
-  ensureWinget,
-  installApp,
+  installAppsNinite,
   setChromeDefault,
   setDns,
   activateWindows,
@@ -31,7 +30,7 @@ import {
   disableAllStartup,
 } from "../lib/tauri";
 import { PROFILES } from "../data/profiles";
-import { POSTFORMAT_APPS } from "../data/postformat";
+import { POSTFORMAT_APPS, NINITE_URL } from "../data/postformat";
 
 type StepState = "pending" | "running" | "done" | "error";
 type Phase = "intro" | "running" | "done";
@@ -40,6 +39,7 @@ interface Step {
   key: string;
   label: string;
   icon: LucideIcon;
+  runningSub?: string;
   action: () => Promise<string>;
 }
 
@@ -49,7 +49,6 @@ export function PostFormat() {
   const [phase, setPhase] = useState<Phase>("intro");
   const [states, setStates] = useState<Record<string, StepState>>({});
   const [details, setDetails] = useState<Record<string, string>>({});
-  const [appProg, setAppProg] = useState<{ name: string; i: number; total: number } | null>(null);
   const [doneIdx, setDoneIdx] = useState(0);
 
   const gamingTweaks = PROFILES.find((p) => p.id === "gaming")?.tweaks ?? [];
@@ -94,27 +93,10 @@ export function PostFormat() {
       key: "apps",
       label: t("pf.step.apps"),
       icon: Download,
+      runningSub: "Descargando e instalando con Ninite…",
       action: async () => {
-        // Verificar y/o instalar winget antes de las apps
-        try {
-          await ensureWinget();
-        } catch (e) {
-          return String(e);
-        }
-        const total = POSTFORMAT_APPS.length;
-        let ok = 0;
-        for (let i = 0; i < total; i++) {
-          const app = POSTFORMAT_APPS[i];
-          setAppProg({ name: app.name, i: i + 1, total });
-          try {
-            await installApp(app.id);
-            ok++;
-          } catch {
-            /* sigue con la siguiente */
-          }
-        }
-        setAppProg(null);
-        return `${ok}/${total} ${t("pf.detail.apps")}`;
+        await installAppsNinite(NINITE_URL);
+        return `${POSTFORMAT_APPS.length} ${t("pf.detail.apps")}`;
       },
     },
     {
@@ -230,11 +212,7 @@ export function PostFormat() {
               {/* contenido */}
               <div className={`pb-5 flex-1 ${st === "pending" ? "opacity-45" : ""}`}>
                 <p className="font-medium text-sm mt-1.5">{s.label}</p>
-                {st === "running" && s.key === "apps" && appProg ? (
-                  <p className="text-xs text-[var(--color-accent)] mt-0.5">
-                    {t("pf.installing")} {appProg.name} ({appProg.i}/{appProg.total})
-                  </p>
-                ) : details[s.key] ? (
+                {details[s.key] ? (
                   <p
                     className={`text-xs mt-0.5 ${
                       st === "error" ? "text-[var(--color-danger)]" : "text-[var(--color-text-muted)]"
@@ -243,7 +221,9 @@ export function PostFormat() {
                     {details[s.key]}
                   </p>
                 ) : st === "running" ? (
-                  <p className="text-xs text-[var(--color-accent)] mt-0.5">{t("common.working")}</p>
+                  <p className="text-xs text-[var(--color-accent)] mt-0.5">
+                    {s.runningSub ?? t("common.working")}
+                  </p>
                 ) : null}
               </div>
             </div>

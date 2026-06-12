@@ -174,6 +174,30 @@ pub fn install_app(winget_id: String) -> Result<String, String> {
     }
 }
 
+/// Descarga el instalador de Ninite desde la URL proporcionada y lo ejecuta.
+/// Solo se permiten URLs del dominio oficial ninite.com.
+#[tauri::command(async)]
+pub fn install_apps_ninite(url: String) -> Result<String, String> {
+    if !url.starts_with("https://ninite.com/") || !url.ends_with("/ninite.exe") {
+        return Err("URL de Ninite no válida".to_string());
+    }
+    let safe_url = url.replace('\'', "''");
+    let script = format!(
+        r#"
+        $progressPreference = 'SilentlyContinue'
+        $ErrorActionPreference = 'Stop'
+        $tmp = Join-Path $env:TEMP 'poxi_ninite.exe'
+        Invoke-WebRequest -Uri '{url}' -OutFile $tmp -TimeoutSec 300 -UseBasicParsing
+        if (-not (Test-Path $tmp)) {{ throw 'No se pudo descargar Ninite' }}
+        Start-Process $tmp -Wait -WindowStyle Minimized
+        Remove-Item $tmp -Force -ErrorAction SilentlyContinue
+        "#,
+        url = safe_url
+    );
+    ps::run_powershell(&script)?;
+    Ok("Apps instaladas correctamente".to_string())
+}
+
 /// [POST-FORMATEO] Intenta poner Chrome como navegador predeterminado.
 /// Windows 10/11 protege esta opción (hash UserChoice), así que lanzamos Chrome
 /// con --make-default-browser, que abre la confirmación nativa de Windows.

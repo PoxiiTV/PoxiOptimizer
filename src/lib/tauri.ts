@@ -107,6 +107,8 @@ export const installApp = (wingetId: string) =>
   invoke<string>("install_app", { wingetId });
 export const wingetSearch = (query: string) =>
   invoke<WingetResult[]>("winget_search", { query });
+export const installAppsNinite = (url: string) =>
+  invoke<string>("install_apps_ninite", { url });
 export const setChromeDefault = () => invoke<string>("set_chrome_default");
 
 /* Desinstalador */
