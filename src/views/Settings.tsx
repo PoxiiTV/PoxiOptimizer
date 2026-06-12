@@ -12,6 +12,7 @@ import {
   RotateCcw,
   FolderOpen,
   HardDrive,
+  CheckCircle2,
   type LucideIcon,
 } from "lucide-react";
 import { openUrl } from "@tauri-apps/plugin-opener";
@@ -49,6 +50,20 @@ const KIND_ICONS: Record<string, LucideIcon> = {
   hosts: Globe,
   reg_backup: HardDrive,
 };
+
+function SectionHeader({ icon: Icon, title, color = "var(--color-accent)" }: { icon: LucideIcon; title: string; color?: string }) {
+  return (
+    <p className="text-sm font-semibold mb-3 flex items-center gap-2.5">
+      <span
+        className="grid place-items-center w-7 h-7 rounded-lg shrink-0"
+        style={{ background: `color-mix(in srgb, ${color} 15%, transparent)` }}
+      >
+        <Icon size={14} style={{ color }} />
+      </span>
+      {title}
+    </p>
+  );
+}
 
 function HistoryRow({
   entry,
@@ -100,8 +115,8 @@ export function Settings() {
   }, []);
 
   const langs: { code: Lang; label: string; flag: string }[] = [
-    { code: "es", label: "Español", flag: "ES" },
-    { code: "en", label: "English", flag: "EN" },
+    { code: "es", label: "Español", flag: "🇪🇸" },
+    { code: "en", label: "English", flag: "🇬🇧" },
   ];
 
   const doExport = async () => {
@@ -129,9 +144,7 @@ export function Settings() {
         try {
           on ? await applyTweak(id) : await revertTweak(id);
           n++;
-        } catch {
-          /* continúa */
-        }
+        } catch { /* continúa */ }
       }
       pushToast(`${t("settings.imported")} (${n})`, "success");
     } catch (e) {
@@ -184,23 +197,49 @@ export function Settings() {
     <div>
       <PageHeader icon={SettingsIcon} title={t("settings.title")} />
 
+      {/* Hero / Acerca de */}
+      <Card className="p-0 mb-4 overflow-hidden">
+        <div className="accent-gradient p-5">
+          <div className="flex items-center gap-4">
+            <div className="grid place-items-center w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm shrink-0 shadow-lg">
+              <Sparkles size={26} className="text-white" />
+            </div>
+            <div>
+              <p className="font-bold text-white text-lg leading-tight">
+                Poxi<span className="opacity-80">Optimizer</span>
+              </p>
+              <p className="text-white/60 text-xs mt-0.5">v3.5.2</p>
+              <p className="text-white/75 text-xs mt-1 leading-snug">{t("settings.aboutBody")}</p>
+            </div>
+          </div>
+        </div>
+        <div className="p-4">
+          <button
+            onClick={() => openUrl(REPO)}
+            className="glass w-full rounded-xl p-3 flex items-center gap-3 hover:bg-[var(--color-surface-hover)] transition-colors"
+          >
+            <Github size={16} className="text-[var(--color-accent)]" />
+            <span className="text-sm font-medium">{t("settings.repo")}</span>
+          </button>
+          <p className="text-xs text-[var(--color-text-dim)] mt-3 leading-relaxed">{t("settings.credits")}</p>
+        </div>
+      </Card>
+
       {/* Idioma */}
       <Card className="p-5 mb-4">
-        <p className="text-sm font-semibold mb-3 flex items-center gap-2">
-          <Globe size={16} className="text-[var(--color-accent)]" /> {t("settings.language")}
-        </p>
+        <SectionHeader icon={Globe} title={t("settings.language")} />
         <div className="flex gap-2.5">
           {langs.map((l) => (
             <button
               key={l.code}
               onClick={() => setLang(l.code)}
-              className={`flex items-center gap-2.5 px-4 h-11 rounded-xl text-sm font-medium transition-all ${
+              className={`flex items-center gap-2.5 px-5 h-12 rounded-xl text-sm font-semibold transition-all ${
                 lang === l.code
                   ? "accent-gradient text-white shadow-lg shadow-[#6d8bff]/25"
                   : "glass hover:bg-[var(--color-surface-hover)]"
               }`}
             >
-              <span className="text-[11px] font-bold opacity-70">{l.flag}</span>
+              <span className="text-xl leading-none">{l.flag}</span>
               {l.label}
             </button>
           ))}
@@ -209,8 +248,8 @@ export function Settings() {
 
       {/* Configuración */}
       <Card className="p-5 mb-4">
-        <p className="text-sm font-semibold mb-1">{t("settings.config")}</p>
-        <p className="text-xs text-[var(--color-text-muted)] mb-3.5">{t("settings.configDesc")}</p>
+        <SectionHeader icon={Upload} title={t("settings.config")} />
+        <p className="text-xs text-[var(--color-text-muted)] mb-3.5 -mt-1">{t("settings.configDesc")}</p>
         <div className="flex gap-2.5">
           <Button variant="ghost" icon={Upload} onClick={doExport} loading={busy === "export"}>
             {t("settings.export")}
@@ -223,8 +262,8 @@ export function Settings() {
 
       {/* Actualizaciones */}
       <Card className="p-5 mb-4">
-        <p className="text-sm font-semibold mb-1">{t("settings.updates")}</p>
-        <p className="text-xs text-[var(--color-text-muted)] mb-3.5">v3.5.2</p>
+        <SectionHeader icon={RefreshCw} title={t("settings.updates")} color="var(--color-success)" />
+        <p className="text-xs text-[var(--color-text-muted)] mb-3.5 -mt-1">v3.5.2</p>
         {update?.update_available ? (
           <div className="glass rounded-xl p-3.5 mb-3 flex items-center gap-3 border-[var(--color-success)]/30">
             <Sparkles size={18} className="text-[var(--color-success)] shrink-0" />
@@ -235,6 +274,11 @@ export function Settings() {
               {t("settings.download")}
             </Button>
           </div>
+        ) : update && !update.update_available ? (
+          <div className="glass rounded-xl p-3 mb-3 flex items-center gap-2.5">
+            <CheckCircle2 size={16} className="text-[var(--color-success)] shrink-0" />
+            <p className="text-xs text-[var(--color-text-muted)]">{t("settings.upToDate")}</p>
+          </div>
         ) : null}
         <Button variant="ghost" icon={busy === "update" ? Loader2 : RefreshCw} onClick={doCheckUpdate} loading={busy === "update"}>
           {t("settings.checkUpdate")}
@@ -243,8 +287,8 @@ export function Settings() {
 
       {/* Backup de registro */}
       <Card className="p-5 mb-4">
-        <p className="text-sm font-semibold mb-1">{t("regbackup.title")}</p>
-        <p className="text-xs text-[var(--color-text-muted)] mb-3.5">{t("regbackup.desc")}</p>
+        <SectionHeader icon={HardDrive} title={t("regbackup.title")} color="var(--color-warning)" />
+        <p className="text-xs text-[var(--color-text-muted)] mb-3.5 -mt-1">{t("regbackup.desc")}</p>
         <div className="flex gap-2.5 flex-wrap mb-3">
           <Button variant="ghost" icon={HardDrive} onClick={doCreateBackup} loading={busy === "backup"}>
             {t("regbackup.create")}
@@ -256,8 +300,8 @@ export function Settings() {
         {backups.length > 0 ? (
           <div className="flex flex-col gap-1">
             {backups.slice(0, 5).map((b) => (
-              <div key={b} className="text-xs text-[var(--color-text-muted)] flex items-center gap-1.5">
-                <HardDrive size={11} className="shrink-0" />
+              <div key={b} className="text-xs text-[var(--color-text-muted)] flex items-center gap-1.5 py-0.5">
+                <HardDrive size={11} className="shrink-0 text-[var(--color-warning)]" />
                 {b}
               </div>
             ))}
@@ -271,12 +315,9 @@ export function Settings() {
       </Card>
 
       {/* Historial de acciones */}
-      <Card className="p-5 mb-4">
+      <Card className="p-5">
         <div className="flex items-center justify-between mb-3">
-          <p className="text-sm font-semibold flex items-center gap-2">
-            <ClipboardList size={16} className="text-[var(--color-accent)]" />
-            {t("history.title")}
-          </p>
+          <SectionHeader icon={ClipboardList} title={t("history.title")} />
           {history.length > 0 && (
             <Button variant="ghost" icon={busy === "clearHistory" ? Loader2 : RotateCcw} onClick={doClearHistory} loading={busy === "clearHistory"}>
               {t("history.clear")}
@@ -313,32 +354,6 @@ export function Settings() {
             ))}
           </div>
         )}
-      </Card>
-
-      {/* Acerca de */}
-      <Card className="p-5">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="grid place-items-center w-11 h-11 rounded-xl accent-gradient">
-            <Sparkles size={22} className="text-white" />
-          </div>
-          <div>
-            <p className="font-semibold">
-              Poxi<span className="text-gradient">Optimizer</span>{" "}
-              <span className="text-xs text-[var(--color-text-dim)] font-normal">v3.5.2</span>
-            </p>
-            <p className="text-xs text-[var(--color-text-muted)]">{t("settings.aboutBody")}</p>
-          </div>
-        </div>
-
-        <button
-          onClick={() => openUrl(REPO)}
-          className="glass w-full rounded-xl p-3.5 flex items-center gap-3 hover:bg-[var(--color-surface-hover)] transition-colors mt-2"
-        >
-          <Github size={18} />
-          <span className="text-sm font-medium">{t("settings.repo")}</span>
-        </button>
-
-        <p className="text-xs text-[var(--color-text-dim)] mt-4 leading-relaxed">{t("settings.credits")}</p>
       </Card>
     </div>
   );

@@ -85,6 +85,7 @@ export const getActivationStatus = () =>
   invoke<ActivationStatus>("get_activation_status");
 export const createRestorePoint = (description: string) =>
   invoke<string>("create_restore_point", { description });
+export const restartPc = () => invoke<void>("restart_pc");
 
 /* Tweaks */
 export const getTweaks = () => invoke<TweakMeta[]>("get_tweaks");

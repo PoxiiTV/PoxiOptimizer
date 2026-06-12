@@ -15,6 +15,8 @@ import {
   Loader2,
   AlertTriangle,
   PartyPopper,
+  RotateCcw,
+  Home,
   type LucideIcon,
 } from "lucide-react";
 import { useStore, useT } from "../store";
@@ -28,6 +30,7 @@ import {
   activateWindows,
   setWindowsUpdateMode,
   disableAllStartup,
+  restartPc,
 } from "../lib/tauri";
 import { PROFILES } from "../data/profiles";
 import { POSTFORMAT_APPS, NINITE_URL } from "../data/postformat";
@@ -410,12 +413,23 @@ function Done({
         ))}
       </motion.div>
 
-      <button
-        onClick={onBack}
-        className="mt-6 px-6 h-11 rounded-xl glass hover:bg-[var(--color-surface-hover)] transition-colors text-sm font-medium"
-      >
-        {t("pf.backHome")}
-      </button>
+      <div className="mt-6 flex gap-3 justify-center flex-wrap">
+        <button
+          onClick={onBack}
+          className="flex items-center gap-2 px-6 h-11 rounded-xl glass hover:bg-[var(--color-surface-hover)] transition-colors text-sm font-medium"
+        >
+          <Home size={15} />
+          {t("pf.backHome")}
+        </button>
+        <motion.button
+          whileTap={{ scale: 0.97 }}
+          onClick={() => restartPc().catch(() => {})}
+          className="flex items-center gap-2 px-6 h-11 rounded-xl accent-gradient text-white text-sm font-semibold shadow-lg shadow-[#6d8bff]/30"
+        >
+          <RotateCcw size={15} />
+          {t("pf.restart")}
+        </motion.button>
+      </div>
     </div>
   );
 }

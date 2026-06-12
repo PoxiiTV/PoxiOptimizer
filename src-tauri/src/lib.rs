@@ -60,6 +60,7 @@ pub fn run() {
             system::is_admin,
             system::get_activation_status,
             system::create_restore_point,
+            system::restart_pc,
             // Tweaks
             tweaks::get_tweaks,
             tweaks::apply_tweak,

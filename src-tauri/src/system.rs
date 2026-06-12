@@ -110,6 +110,13 @@ if ($lic -and $lic.LicenseStatus -eq 1) {
     serde_json::from_str(&out).map_err(|e| format!("No se pudo leer el estado de activacion: {e}"))
 }
 
+/// Reinicia el equipo inmediatamente.
+#[tauri::command(async)]
+pub fn restart_pc() -> Result<(), String> {
+    ps::run_powershell("Restart-Computer -Force")?;
+    Ok(())
+}
+
 /// Crea un punto de restauracion del sistema antes de aplicar cambios.
 /// Habilita System Restore en la unidad del sistema si estuviera desactivado y
 /// elimina temporalmente el limite de frecuencia para garantizar la creacion.
