@@ -4,6 +4,32 @@ Todas las versiones notables de PoxiOptimizer. / All notable versions of PoxiOpt
 
 ---
 
+## [3.5.1] — 2026-06-12
+
+### 🇪🇸 Español
+
+#### ✨ Novedades
+- **Overlay de carga bloqueante** — al aplicar un perfil, cambiar DNS o activar Windows/Office aparece un overlay glassmorphism con spinner animado que muestra exactamente qué está ocurriendo y bloquea la UI hasta que termina.
+- Aplicar perfil muestra en tiempo real el tweak activo (ej. "Desactivar telemetría (3/29)").
+- Activar Windows/Office muestra un overlay en español mientras MAS trabaja en segundo plano.
+
+#### 🐛 Correcciones
+- **winget en Post-Formateo**: ahora instala winget automáticamente si no está disponible (ediciones LTSC/IoT sin Microsoft Store). Descarga VCLibs + UIXaml + bundle directamente de Microsoft/GitHub y los instala con `Add-AppxPackage` — no requiere la Store.
+- "Trabajando…" reemplazado por "Aplicando…" en toda la app.
+
+### 🇬🇧 English
+
+#### ✨ What's new
+- **Blocking loading overlay** — applying a profile, changing DNS or activating Windows/Office now shows a glassmorphism overlay with an animated spinner that displays exactly what is happening and blocks the UI until done.
+- Profile apply shows the active tweak in real time (e.g. "Disable telemetry (3/29)").
+- Windows/Office activation shows a Spanish overlay while MAS works in the background.
+
+#### 🐛 Bug fixes
+- **winget in Post-Format**: now auto-installs winget if not present (LTSC/IoT editions without Microsoft Store). Downloads VCLibs + UIXaml + bundle directly from Microsoft/GitHub and installs via `Add-AppxPackage` — no Store required.
+- "Working…" replaced with "Applying…" throughout the app.
+
+---
+
 ## [3.5.0] — 2026-06-12
 
 ### 🇪🇸 Español

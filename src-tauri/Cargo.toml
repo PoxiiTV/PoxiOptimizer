@@ -1,6 +1,6 @@
 [package]
 name = "poxi-optimizer"
-version = "3.5.0"
+version = "3.5.1"
 description = "PoxiOptimizer - La herramienta definitiva de optimizacion y activacion de Windows"
 authors = ["Poxi"]
 edition = "2021"
