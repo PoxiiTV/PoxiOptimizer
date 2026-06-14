@@ -208,7 +208,7 @@ export function Settings() {
               <p className="font-bold text-white text-lg leading-tight">
                 Poxi<span className="opacity-80">Optimizer</span>
               </p>
-              <p className="text-white/60 text-xs mt-0.5">v3.5.2</p>
+              <p className="text-white/60 text-xs mt-0.5">v3.5.3</p>
               <p className="text-white/75 text-xs mt-1 leading-snug">{t("settings.aboutBody")}</p>
             </div>
           </div>
@@ -263,7 +263,7 @@ export function Settings() {
       {/* Actualizaciones */}
       <Card className="p-5 mb-4">
         <SectionHeader icon={RefreshCw} title={t("settings.updates")} color="var(--color-success)" />
-        <p className="text-xs text-[var(--color-text-muted)] mb-3.5 -mt-1">v3.5.2</p>
+        <p className="text-xs text-[var(--color-text-muted)] mb-3.5 -mt-1">v3.5.3</p>
         {update?.update_available ? (
           <div className="glass rounded-xl p-3.5 mb-3 flex items-center gap-3 border-[var(--color-success)]/30">
             <Sparkles size={18} className="text-[var(--color-success)] shrink-0" />

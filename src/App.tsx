@@ -25,6 +25,7 @@ import { Settings } from "./views/Settings";
 import { Hosts } from "./views/Hosts";
 import { WindowsTools } from "./views/WindowsTools";
 import { WindowsFeatures } from "./views/WindowsFeatures";
+import { ContextMenu } from "./views/ContextMenu";
 
 const VIEWS = {
   dashboard: Dashboard,
@@ -42,6 +43,7 @@ const VIEWS = {
   hosts: Hosts,
   wintools: WindowsTools,
   winfeatures: WindowsFeatures,
+  contextmenu: ContextMenu,
   settings: Settings,
 };
 

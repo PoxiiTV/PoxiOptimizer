@@ -15,6 +15,7 @@ import {
   Globe,
   Network as NetIcon,
   Cpu,
+  MousePointer2,
   type LucideIcon,
 } from "lucide-react";
 import { useStore, useT, type View } from "../store";
@@ -60,6 +61,7 @@ const GROUPS: { titleKey: string; items: Item[] }[] = [
     items: [
       { view: "wintools", icon: Wrench, labelKey: "nav.wintools" },
       { view: "winfeatures", icon: Cpu, labelKey: "nav.winfeatures" },
+      { view: "contextmenu", icon: MousePointer2, labelKey: "nav.contextmenu" },
     ],
   },
 ];

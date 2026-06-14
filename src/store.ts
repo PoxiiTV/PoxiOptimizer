@@ -28,6 +28,7 @@ export type View =
   | "hosts"
   | "wintools"
   | "winfeatures"
+  | "contextmenu"
   | "settings";
 
 export interface Toast {

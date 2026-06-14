@@ -310,6 +310,25 @@ const es: Dict = {
   "dash.ruxi.title": "¿Vas a formatear? Usa Ruxi",
   "dash.ruxi.body": "El USB de Windows más fácil de crear. Asistente paso a paso, descarga la ISO, crea el USB y te guía hasta el primer arranque.",
   "dash.ruxi.cta": "Descargar Ruxi gratis",
+
+  // Menú contextual PoxiTools
+  "nav.contextmenu": "Menú Contextual",
+  "cm.title": "Menú Contextual",
+  "cm.subtitle": "Añade PoxiTools ⚡ al botón derecho del escritorio y las carpetas",
+  "cm.statusActive": "Activo",
+  "cm.statusInactive": "Inactivo",
+  "cm.statusChecking": "Comprobando…",
+  "cm.activateBtn": "Activar menú contextual",
+  "cm.deactivateBtn": "Desactivar",
+  "cm.installed": "Menú contextual PoxiTools activado ✅",
+  "cm.removed": "Menú contextual eliminado",
+  "cm.desc": "Añade un submenú «PoxiTools ⚡» al hacer clic derecho en el escritorio o en cualquier carpeta. Incluye 18 herramientas de sistema accesibles con un solo clic.",
+  "cm.tools": "Herramientas incluidas",
+  "cm.cat.system": "Sistema",
+  "cm.cat.cleanup": "Limpieza",
+  "cm.cat.network": "Red",
+  "cm.cat.power": "Pantalla y energía",
+  "cm.cat.tools": "Herramientas",
 };
 
 const en: Dict = {
@@ -612,6 +631,25 @@ const en: Dict = {
   "dash.ruxi.title": "Formatting your PC? Use Ruxi",
   "dash.ruxi.body": "The easiest Windows USB ever. Step-by-step wizard, ISO download, USB creation and boot guide included.",
   "dash.ruxi.cta": "Download Ruxi for free",
+
+  // Context menu PoxiTools
+  "nav.contextmenu": "Context Menu",
+  "cm.title": "Context Menu",
+  "cm.subtitle": "Add PoxiTools ⚡ to the right-click menu on the desktop and folders",
+  "cm.statusActive": "Active",
+  "cm.statusInactive": "Inactive",
+  "cm.statusChecking": "Checking…",
+  "cm.activateBtn": "Enable context menu",
+  "cm.deactivateBtn": "Disable",
+  "cm.installed": "PoxiTools context menu enabled ✅",
+  "cm.removed": "Context menu removed",
+  "cm.desc": "Adds a «PoxiTools ⚡» submenu when right-clicking the desktop or any folder. Includes 18 system tools accessible with a single click.",
+  "cm.tools": "Included tools",
+  "cm.cat.system": "System",
+  "cm.cat.cleanup": "Cleanup",
+  "cm.cat.network": "Network",
+  "cm.cat.power": "Display & power",
+  "cm.cat.tools": "Tools",
 };
 
 const dicts: Record<Lang, Dict> = { es, en };

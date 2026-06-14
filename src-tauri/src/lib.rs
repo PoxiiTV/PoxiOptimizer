@@ -5,6 +5,7 @@ mod activation;
 mod apps;
 mod cleanup;
 mod config;
+mod contextmenu;
 mod debloat;
 mod history;
 mod hosts;
@@ -125,6 +126,10 @@ pub fn run() {
             winfeatures::get_windows_features,
             winfeatures::enable_windows_feature,
             winfeatures::disable_windows_feature,
+            // Menú contextual PoxiTools
+            contextmenu::context_menu_installed,
+            contextmenu::install_context_menu,
+            contextmenu::uninstall_context_menu,
         ])
         .run(tauri::generate_context!())
         .expect("error al ejecutar PoxiOptimizer");

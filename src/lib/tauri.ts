@@ -207,3 +207,8 @@ export interface WinFeature {
 export const getWindowsFeatures = () => invoke<WinFeature[]>("get_windows_features");
 export const enableWindowsFeature = (id: string) => invoke<string>("enable_windows_feature", { id });
 export const disableWindowsFeature = (id: string) => invoke<string>("disable_windows_feature", { id });
+
+/* Menú contextual PoxiTools */
+export const contextMenuInstalled = () => invoke<boolean>("context_menu_installed");
+export const installContextMenu = () => invoke<string>("install_context_menu");
+export const uninstallContextMenu = () => invoke<string>("uninstall_context_menu");
