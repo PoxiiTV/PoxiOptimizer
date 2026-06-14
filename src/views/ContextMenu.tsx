@@ -39,9 +39,9 @@ const TOOL_GROUPS: ToolGroup[] = [
     color: "var(--color-accent)",
     icon: Monitor,
     items: [
-      { emoji: "↺", name: "Reiniciar Explorador", desc: "Reinicia explorer.exe sin cerrar sesión" },
-      { emoji: "⊞", name: "Reconstruir caché de iconos", desc: "Elimina IconCache.db y reinicia el Explorador" },
-      { emoji: "▦", name: "Limpiar caché de miniaturas", desc: "Elimina thumbcache_* y reinicia el Explorador" },
+      { emoji: "🔄", name: "Reiniciar Explorador", desc: "Reinicia explorer.exe sin cerrar sesión" },
+      { emoji: "🖼️", name: "Reconstruir caché de iconos", desc: "Elimina IconCache.db y reinicia el Explorador" },
+      { emoji: "🗂️", name: "Limpiar caché de miniaturas", desc: "Elimina thumbcache_* y reinicia el Explorador" },
     ],
   },
   {
@@ -49,10 +49,10 @@ const TOOL_GROUPS: ToolGroup[] = [
     color: "#f97316",
     icon: Trash2,
     items: [
-      { emoji: "◈", name: "Liberar memoria", desc: "Fuerza GC y reduce el Working Set de los procesos" },
-      { emoji: "✕", name: "Eliminar temporales", desc: "Borra %TEMP% y C:\\Windows\\Temp" },
-      { emoji: "◯", name: "Vaciar papelera", desc: "Vacía la papelera sin confirmación" },
-      { emoji: "◉", name: "Mostrar/ocultar archivos ocultos", desc: "Alterna la visibilidad de archivos ocultos" },
+      { emoji: "🧹", name: "Liberar memoria", desc: "Fuerza GC y reduce el Working Set de los procesos" },
+      { emoji: "🗑️", name: "Eliminar temporales", desc: "Borra %TEMP% y C:\\Windows\\Temp" },
+      { emoji: "♻️", name: "Vaciar papelera", desc: "Vacía la papelera sin confirmación" },
+      { emoji: "👁️", name: "Mostrar/ocultar archivos ocultos", desc: "Alterna la visibilidad de archivos ocultos" },
     ],
   },
   {
@@ -60,9 +60,9 @@ const TOOL_GROUPS: ToolGroup[] = [
     color: "#22c55e",
     icon: Wifi,
     items: [
-      { emoji: "◎", name: "Vaciar caché DNS", desc: "ipconfig /flushdns" },
-      { emoji: "⊡", name: "Copiar IP local", desc: "Copia la IP al portapapeles en silencio" },
-      { emoji: "⟳", name: "Resetear adaptadores de red", desc: "Ejecuta netsh winsock/ip reset (requiere UAC)" },
+      { emoji: "🌐", name: "Vaciar caché DNS", desc: "ipconfig /flushdns" },
+      { emoji: "📋", name: "Copiar IP local", desc: "Copia la IP al portapapeles en silencio" },
+      { emoji: "🔌", name: "Resetear adaptadores de red", desc: "Ejecuta netsh winsock/ip reset (requiere UAC)" },
     ],
   },
   {
@@ -70,8 +70,8 @@ const TOOL_GROUPS: ToolGroup[] = [
     color: "#a855f7",
     icon: Zap,
     items: [
-      { emoji: "▣", name: "Apagar pantalla", desc: "Apaga el monitor sin bloquear la sesión" },
-      { emoji: "◑", name: "Modo noche", desc: "Abre la configuración de luz nocturna" },
+      { emoji: "🖥️", name: "Apagar pantalla", desc: "Apaga el monitor sin bloquear la sesión" },
+      { emoji: "🌙", name: "Modo noche", desc: "Abre la configuración de luz nocturna" },
       { emoji: "⚡", name: "Plan de energía  ▶", desc: "Submenú: Alto rendimiento / Equilibrado / Ahorro" },
     ],
   },
@@ -80,10 +80,10 @@ const TOOL_GROUPS: ToolGroup[] = [
     color: "#f59e0b",
     icon: Wrench,
     items: [
-      { emoji: "▤", name: "Administrador de tareas", desc: "Lanza taskmgr.exe" },
-      { emoji: "◧", name: "Editor de Registro", desc: "Lanza regedit.exe" },
-      { emoji: "▷", name: "PowerShell como admin", desc: "Abre una consola elevada" },
-      { emoji: "▸", name: "CMD como admin", desc: "Abre el símbolo del sistema elevado" },
+      { emoji: "📊", name: "Administrador de tareas", desc: "Lanza taskmgr.exe" },
+      { emoji: "📝", name: "Editor de Registro", desc: "Lanza regedit.exe" },
+      { emoji: "💻", name: "PowerShell como admin", desc: "Abre una consola elevada" },
+      { emoji: "⌨️", name: "CMD como admin", desc: "Abre el símbolo del sistema elevado" },
       { emoji: "⚡", name: "Abrir PoxiOptimizer", desc: "Lanza PoxiOptimizer directamente" },
     ],
   },
