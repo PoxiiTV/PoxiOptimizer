@@ -1,24 +1,23 @@
-//! Gestión del menú contextual de Windows (submenú PoxiTools ⚡).
+//! Gestión del menú contextual de Windows.
 //!
-//! IDs de herramientas (determinan el orden en el menú — orden alfanumérico):
+//! Crea DOS entradas en el menú contextual para evitar el límite de altura:
 //!
-//!   SISTEMA           01-03
-//!   LIMPIEZA          04-07
-//!   RED               08-11  (11 = Ping Google, nuevo)
-//!   PANTALLA/ENERGÍA  12-15  (14 = Bloquear pantalla, nuevo; 15 = plan energía)
-//!   HERRAMIENTAS      16-22  (20 = Dev. Manager, 21 = msconfig, nuevos)
+//!   PoxiTools ⚡ · Sistema     → Sistema + Limpieza + Red     (01–11)
+//!   PoxiTools ⚡ · Utilidades  → Pantalla/Energía + Herram.  (12–22)
 //!
-//! El frontend pasa un Vec<String> con los IDs activos; el PS script salta los
-//! no incluidos gracias a `if ('ID' -in $enabled) { ... }`.
+//! Cada herramienta usa un .vbs en ProgramData con wscript //B + SW_HIDE=0
+//! (cero flash de ventana) y notificación WinRT al finalizar.
 
 use crate::ps;
 
-const ROOT_KEY: &str = r"HKLM:\SOFTWARE\Classes\Directory\Background\shell\PoxiTools";
+const ROOT1: &str = r"HKLM:\SOFTWARE\Classes\Directory\Background\shell\PoxiTools1";
+const ROOT2: &str = r"HKLM:\SOFTWARE\Classes\Directory\Background\shell\PoxiTools2";
 const SCRIPTS_DIR: &str = r"C:\ProgramData\PoxiOptimizer\contextmenu";
 
 const INSTALL_SCRIPT: &str = r#"
 $ErrorActionPreference = 'SilentlyContinue'
-$root    = 'HKLM:\SOFTWARE\Classes\Directory\Background\shell\PoxiTools'
+$root1   = 'HKLM:\SOFTWARE\Classes\Directory\Background\shell\PoxiTools1'
+$root2   = 'HKLM:\SOFTWARE\Classes\Directory\Background\shell\PoxiTools2'
 $scripts = 'C:\ProgramData\PoxiOptimizer\contextmenu'
 $ico     = '__EXE__,0'
 $psAppId = '{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}\WindowsPowerShell\v1.0\powershell.exe'
@@ -43,9 +42,9 @@ function Write-VbsLauncher {
 }
 
 function Add-PoxiItem {
-    param([string]$Id, [string]$Label, [string]$PsScript, [string]$Toast = '')
+    param([string]$Root, [string]$Id, [string]$Label, [string]$PsScript, [string]$Toast = '')
     $cmd = Write-VbsLauncher -Name $Id -PsScript $PsScript -Toast $Toast
-    $p   = "$root\shell\$Id"
+    $p   = "$Root\shell\$Id"
     New-Item -Path $p -Force | Out-Null
     Set-ItemProperty -Path $p -Name '(Default)' -Value $Label -Force
     Set-ItemProperty -Path $p -Name 'Icon'      -Value $ico   -Force
@@ -53,96 +52,95 @@ function Add-PoxiItem {
     Set-ItemProperty -Path "$p\command" -Name '(Default)' -Value $cmd -Force
 }
 
-# --- Limpiar instalación anterior ---
-Remove-Item -Path $root    -Recurse -Force -ErrorAction SilentlyContinue
+# ── Limpiar instalación anterior ──────────────────────────────────────────────
+Remove-Item -Path $root1   -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item -Path $root2   -Recurse -Force -ErrorAction SilentlyContinue
 Remove-Item -Path $scripts -Recurse -Force -ErrorAction SilentlyContinue
 New-Item -Path $scripts -ItemType Directory -Force | Out-Null
 
-# --- Clave raíz ---
-New-Item -Path $root -Force | Out-Null
-Set-ItemProperty -Path $root -Name 'MUIVerb'     -Value 'PoxiTools ⚡' -Force
-Set-ItemProperty -Path $root -Name 'SubCommands' -Value ''             -Force
-Set-ItemProperty -Path $root -Name 'Icon'        -Value $ico           -Force
-Set-ItemProperty -Path $root -Name 'Position'    -Value 'Bottom'       -Force
-New-Item -Path "$root\shell" -Force | Out-Null
+# ── Clave 1: PoxiTools ⚡ · Sistema ──────────────────────────────────────────
+New-Item -Path $root1 -Force | Out-Null
+Set-ItemProperty -Path $root1 -Name 'MUIVerb'     -Value 'PoxiTools ⚡  Sistema'    -Force
+Set-ItemProperty -Path $root1 -Name 'SubCommands' -Value ''                          -Force
+Set-ItemProperty -Path $root1 -Name 'Icon'        -Value $ico                        -Force
+Set-ItemProperty -Path $root1 -Name 'Position'    -Value 'Bottom'                    -Force
+New-Item -Path "$root1\shell" -Force | Out-Null
 
-# ── SISTEMA ──────────────────────────────────────────────────────────────────
 if ('01_RestartExplorer' -in $enabled) {
-    Add-PoxiItem '01_RestartExplorer' 'Reiniciar Explorador' `
+    Add-PoxiItem $root1 '01_RestartExplorer' 'Reiniciar Explorador' `
         'Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 1; Start-Process explorer' `
         'Explorador reiniciado'
 }
 if ('02_RebuildIcons' -in $enabled) {
-    Add-PoxiItem '02_RebuildIcons' 'Reconstruir cache de iconos' `
+    Add-PoxiItem $root1 '02_RebuildIcons' 'Reconstruir cache de iconos' `
         'Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 1; Remove-Item -Path "$env:LOCALAPPDATA\IconCache.db" -Force -ErrorAction SilentlyContinue; Remove-Item -Path "$env:LOCALAPPDATA\Microsoft\Windows\Explorer\iconcache_*" -Force -ErrorAction SilentlyContinue; Start-Process explorer' `
         'Cache de iconos reconstruida'
 }
 if ('03_ClearThumbs' -in $enabled) {
-    Add-PoxiItem '03_ClearThumbs' 'Limpiar cache de miniaturas' `
+    Add-PoxiItem $root1 '03_ClearThumbs' 'Limpiar cache de miniaturas' `
         'Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 1; Remove-Item -Path "$env:LOCALAPPDATA\Microsoft\Windows\Explorer\thumbcache_*" -Force -ErrorAction SilentlyContinue; Start-Process explorer' `
         'Cache de miniaturas eliminada'
 }
-
-# ── LIMPIEZA ──────────────────────────────────────────────────────────────────
 if ('04_FreeMemory' -in $enabled) {
-    Add-PoxiItem '04_FreeMemory' 'Liberar memoria' `
+    Add-PoxiItem $root1 '04_FreeMemory' 'Liberar memoria' `
         '[System.GC]::Collect(); [System.GC]::WaitForPendingFinalizers(); foreach ($proc in (Get-Process | Where-Object {-not $_.HasExited})) { try { $proc.MinWorkingSet = $proc.MinWorkingSet } catch {} }' `
         'Memoria liberada'
 }
 if ('05_DeleteTemp' -in $enabled) {
-    Add-PoxiItem '05_DeleteTemp' 'Eliminar temporales' `
+    Add-PoxiItem $root1 '05_DeleteTemp' 'Eliminar temporales' `
         'Remove-Item -Path "$env:TEMP\*" -Recurse -Force -ErrorAction SilentlyContinue; Remove-Item -Path "C:\Windows\Temp\*" -Recurse -Force -ErrorAction SilentlyContinue' `
         'Archivos temporales eliminados'
 }
 if ('06_EmptyRecycleBin' -in $enabled) {
-    Add-PoxiItem '06_EmptyRecycleBin' 'Vaciar papelera' `
+    Add-PoxiItem $root1 '06_EmptyRecycleBin' 'Vaciar papelera' `
         'Clear-RecycleBin -Force -ErrorAction SilentlyContinue' `
         'Papelera vaciada'
 }
 if ('07_ToggleHidden' -in $enabled) {
-    Add-PoxiItem '07_ToggleHidden' 'Mostrar/ocultar archivos ocultos' `
+    Add-PoxiItem $root1 '07_ToggleHidden' 'Mostrar/ocultar archivos ocultos' `
         '$k = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"; $c = (Get-ItemProperty $k -Name Hidden -ErrorAction SilentlyContinue).Hidden; Set-ItemProperty $k -Name Hidden -Value (if ($c -eq 1) {2} else {1}); Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue; Start-Process explorer' `
         'Visibilidad de archivos ocultos cambiada'
 }
-
-# ── RED ───────────────────────────────────────────────────────────────────────
 if ('08_FlushDNS' -in $enabled) {
-    Add-PoxiItem '08_FlushDNS' 'Vaciar cache DNS' 'ipconfig /flushdns' 'Cache DNS vaciada'
+    Add-PoxiItem $root1 '08_FlushDNS' 'Vaciar cache DNS' 'ipconfig /flushdns' 'Cache DNS vaciada'
 }
 if ('09_CopyIP' -in $enabled) {
-    Add-PoxiItem '09_CopyIP' 'Copiar IP local' `
+    Add-PoxiItem $root1 '09_CopyIP' 'Copiar IP local' `
         'Add-Type -Assembly System.Windows.Forms; $ip = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.PrefixOrigin -ne "WellKnown" -and $_.IPAddress -notlike "169.*" -and $_.IPAddress -ne "127.0.0.1" } | Select-Object -First 1).IPAddress; if ($ip) { [System.Windows.Forms.Clipboard]::SetText($ip) }' `
         'IP local copiada al portapapeles'
 }
 if ('10_ResetNetwork' -in $enabled) {
-    Add-PoxiItem '10_ResetNetwork' 'Resetear adaptadores de red' `
+    Add-PoxiItem $root1 '10_ResetNetwork' 'Resetear adaptadores de red' `
         'Start-Process powershell -Verb RunAs -ArgumentList "-WindowStyle Hidden -Command ''netsh winsock reset; netsh int ip reset; ipconfig /release; ipconfig /flushdns; ipconfig /renew''"' `
         'Reseteando red... reinicia el PC al terminar'
 }
 if ('11_PingGoogle' -in $enabled) {
-    Add-PoxiItem '11_PingGoogle' 'Ping a Google' `
+    Add-PoxiItem $root1 '11_PingGoogle' 'Ping a Google' `
         'Start-Process cmd -ArgumentList "/k ping 8.8.8.8 -n 4"' `
         'Ping en curso...'
 }
 
-# ── PANTALLA Y ENERGÍA ────────────────────────────────────────────────────────
+# ── Clave 2: PoxiTools ⚡ · Utilidades ───────────────────────────────────────
+New-Item -Path $root2 -Force | Out-Null
+Set-ItemProperty -Path $root2 -Name 'MUIVerb'     -Value 'PoxiTools ⚡  Utilidades' -Force
+Set-ItemProperty -Path $root2 -Name 'SubCommands' -Value ''                          -Force
+Set-ItemProperty -Path $root2 -Name 'Icon'        -Value $ico                        -Force
+Set-ItemProperty -Path $root2 -Name 'Position'    -Value 'Bottom'                    -Force
+New-Item -Path "$root2\shell" -Force | Out-Null
+
 if ('12_TurnOffScreen' -in $enabled) {
-    Add-PoxiItem '12_TurnOffScreen' 'Apagar pantalla' `
+    Add-PoxiItem $root2 '12_TurnOffScreen' 'Apagar pantalla' `
         '(Add-Type -MemberDefinition "[DllImport(""user32.dll"")]public static extern IntPtr SendMessage(IntPtr h,uint m,IntPtr w,IntPtr l);" -Name u -Namespace W -PassThru)::SendMessage(-1, 0x0112, [IntPtr]0xF170, [IntPtr]2)' `
         'Pantalla apagada'
 }
 if ('13_NightLight' -in $enabled) {
-    Add-PoxiItem '13_NightLight' 'Modo noche' 'Start-Process "ms-settings:display"' 'Abriendo configuracion de pantalla'
+    Add-PoxiItem $root2 '13_NightLight' 'Modo noche' 'Start-Process "ms-settings:display"' 'Abriendo configuracion de pantalla'
 }
 if ('14_LockScreen' -in $enabled) {
-    Add-PoxiItem '14_LockScreen' 'Bloquear pantalla' `
-        'rundll32.exe user32.dll,LockWorkStation' `
-        'Pantalla bloqueada'
+    Add-PoxiItem $root2 '14_LockScreen' 'Bloquear pantalla' 'rundll32.exe user32.dll,LockWorkStation' 'Pantalla bloqueada'
 }
-
-# Plan de energía (submenú) ───────────────────────────────────────────────────
 if ('15_PowerPlan' -in $enabled) {
-    $planPath = "$root\shell\15_PowerPlan"
+    $planPath = "$root2\shell\15_PowerPlan"
     New-Item -Path $planPath -Force | Out-Null
     Set-ItemProperty -Path $planPath -Name 'MUIVerb'     -Value 'Plan de energia' -Force
     Set-ItemProperty -Path $planPath -Name 'SubCommands' -Value ''                -Force
@@ -170,32 +168,28 @@ if ('15_PowerPlan' -in $enabled) {
     New-Item -Path "$planPath\shell\03_Saver\command" -Force | Out-Null
     Set-ItemProperty -Path "$planPath\shell\03_Saver\command" -Name '(Default)' -Value $cmdSav -Force
 }
-
-# ── HERRAMIENTAS ──────────────────────────────────────────────────────────────
 if ('16_TaskMgr' -in $enabled) {
-    Add-PoxiItem '16_TaskMgr' 'Administrador de tareas' 'Start-Process taskmgr' 'Abriendo Administrador de tareas'
+    Add-PoxiItem $root2 '16_TaskMgr' 'Administrador de tareas' 'Start-Process taskmgr' 'Abriendo Administrador de tareas'
 }
 if ('17_RegEdit' -in $enabled) {
-    Add-PoxiItem '17_RegEdit' 'Editor de Registro' 'Start-Process regedit' 'Abriendo Editor de Registro'
+    Add-PoxiItem $root2 '17_RegEdit' 'Editor de Registro' 'Start-Process regedit' 'Abriendo Editor de Registro'
 }
 if ('18_PsAdmin' -in $enabled) {
-    Add-PoxiItem '18_PsAdmin' 'PowerShell como admin' `
+    Add-PoxiItem $root2 '18_PsAdmin' 'PowerShell como admin' `
         'Start-Process powershell -Verb RunAs -ArgumentList "-NoExit -Command Set-Location $env:USERPROFILE"' `
         'Abriendo PowerShell como administrador'
 }
 if ('19_CmdAdmin' -in $enabled) {
-    Add-PoxiItem '19_CmdAdmin' 'CMD como admin' 'Start-Process cmd -Verb RunAs' 'Abriendo CMD como administrador'
+    Add-PoxiItem $root2 '19_CmdAdmin' 'CMD como admin' 'Start-Process cmd -Verb RunAs' 'Abriendo CMD como administrador'
 }
 if ('20_DevMgmt' -in $enabled) {
-    Add-PoxiItem '20_DevMgmt' 'Administrador de dispositivos' 'Start-Process devmgmt.msc' 'Abriendo Administrador de dispositivos'
+    Add-PoxiItem $root2 '20_DevMgmt' 'Administrador de dispositivos' 'Start-Process devmgmt.msc' 'Abriendo Administrador de dispositivos'
 }
 if ('21_Msconfig' -in $enabled) {
-    Add-PoxiItem '21_Msconfig' 'Configuracion del sistema' 'Start-Process msconfig' 'Abriendo Configuracion del sistema'
+    Add-PoxiItem $root2 '21_Msconfig' 'Configuracion del sistema' 'Start-Process msconfig' 'Abriendo Configuracion del sistema'
 }
-
-# === ABRIR POXIOPTIMIZER (GUI directa, sin VBS) ==============================
 if ('22_PoxiOptimizer' -in $enabled) {
-    $pp = "$root\shell\22_PoxiOptimizer"
+    $pp = "$root2\shell\22_PoxiOptimizer"
     New-Item -Path $pp -Force | Out-Null
     Set-ItemProperty -Path $pp -Name '(Default)' -Value 'Abrir PoxiOptimizer' -Force
     Set-ItemProperty -Path $pp -Name 'Icon'      -Value $ico                  -Force
@@ -208,7 +202,7 @@ if ('22_PoxiOptimizer' -in $enabled) {
 pub fn context_menu_installed() -> bool {
     let script = format!(
         "if (Test-Path '{}') {{ 'yes' }} else {{ 'no' }}",
-        ROOT_KEY
+        ROOT1
     );
     matches!(ps::run_powershell(&script), Ok(out) if out.stdout.trim() == "yes")
 }
@@ -219,7 +213,6 @@ pub fn install_context_menu(enabled: Vec<String>) -> Result<String, String> {
         .map(|p| p.to_string_lossy().to_string())
         .unwrap_or_default();
 
-    // Prepend $enabled array so the PS script can check membership
     let ids: Vec<String> = enabled
         .iter()
         .map(|id| format!("'{}'", id.replace('\'', "''")))
@@ -235,8 +228,9 @@ pub fn install_context_menu(enabled: Vec<String>) -> Result<String, String> {
 pub fn uninstall_context_menu() -> Result<String, String> {
     let script = format!(
         "Remove-Item -Path '{}' -Recurse -Force -ErrorAction SilentlyContinue; \
+         Remove-Item -Path '{}' -Recurse -Force -ErrorAction SilentlyContinue; \
          Remove-Item -Path '{}' -Recurse -Force -ErrorAction SilentlyContinue",
-        ROOT_KEY, SCRIPTS_DIR
+        ROOT1, ROOT2, SCRIPTS_DIR
     );
     ps::run_powershell(&script)?;
     Ok("Menú contextual eliminado".to_string())

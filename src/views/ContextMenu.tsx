@@ -34,6 +34,7 @@ interface ToolGroup {
   color: string;
   icon: LucideIcon;
   items: ToolItem[];
+  menu: 1 | 2; // a qué entrada del menú contextual pertenece
 }
 
 const TOOL_GROUPS: ToolGroup[] = [
@@ -41,6 +42,7 @@ const TOOL_GROUPS: ToolGroup[] = [
     categoryKey: "cm.cat.system",
     color: "var(--color-accent)",
     icon: Monitor,
+    menu: 1,
     items: [
       { id: "01_RestartExplorer", emoji: "🔄", name: "Reiniciar Explorador",        desc: "Reinicia explorer.exe sin cerrar sesión" },
       { id: "02_RebuildIcons",    emoji: "🖼️", name: "Reconstruir caché de iconos", desc: "Elimina IconCache.db y reinicia el Explorador" },
@@ -51,6 +53,7 @@ const TOOL_GROUPS: ToolGroup[] = [
     categoryKey: "cm.cat.cleanup",
     color: "#f97316",
     icon: Trash2,
+    menu: 1,
     items: [
       { id: "04_FreeMemory",     emoji: "🧹", name: "Liberar memoria",              desc: "Fuerza GC y reduce el Working Set de los procesos" },
       { id: "05_DeleteTemp",     emoji: "🗑️", name: "Eliminar temporales",          desc: "Borra %TEMP% y C:\\Windows\\Temp" },
@@ -62,6 +65,7 @@ const TOOL_GROUPS: ToolGroup[] = [
     categoryKey: "cm.cat.network",
     color: "#22c55e",
     icon: Wifi,
+    menu: 1,
     items: [
       { id: "08_FlushDNS",     emoji: "🌐", name: "Vaciar caché DNS",           desc: "ipconfig /flushdns" },
       { id: "09_CopyIP",       emoji: "📋", name: "Copiar IP local",            desc: "Copia la IP al portapapeles" },
@@ -73,6 +77,7 @@ const TOOL_GROUPS: ToolGroup[] = [
     categoryKey: "cm.cat.power",
     color: "#a855f7",
     icon: Zap,
+    menu: 2,
     items: [
       { id: "12_TurnOffScreen", emoji: "🖥️", name: "Apagar pantalla",     desc: "Apaga el monitor sin bloquear la sesión" },
       { id: "13_NightLight",    emoji: "🌙", name: "Modo noche",           desc: "Abre la configuración de luz nocturna" },
@@ -84,6 +89,7 @@ const TOOL_GROUPS: ToolGroup[] = [
     categoryKey: "cm.cat.tools",
     color: "#f59e0b",
     icon: Wrench,
+    menu: 2,
     items: [
       { id: "16_TaskMgr",       emoji: "📊", name: "Administrador de tareas",       desc: "Lanza taskmgr.exe" },
       { id: "17_RegEdit",       emoji: "📝", name: "Editor de Registro",            desc: "Lanza regedit.exe" },
@@ -216,7 +222,7 @@ export function ContextMenu() {
                 <div>
                   <p className="font-semibold text-sm leading-tight">PoxiTools ⚡</p>
                   <p className="text-xs text-[var(--color-text-dim)]">
-                    Clic derecho → submenú con {ALL_IDS.length} herramientas
+                    2 submenús · {ALL_IDS.length} herramientas en el clic derecho
                   </p>
                 </div>
               </div>
@@ -279,8 +285,26 @@ export function ContextMenu() {
 
         {/* Lista de herramientas */}
         <div className="space-y-5">
-          {TOOL_GROUPS.map((group) => (
+          {TOOL_GROUPS.map((group, i) => (
             <div key={group.categoryKey}>
+              {/* Separador entre menú 1 y menú 2 */}
+              {i > 0 && TOOL_GROUPS[i - 1].menu !== group.menu && (
+                <div className="flex items-center gap-3 mb-5 -mt-1">
+                  <div className="h-px flex-1 bg-[var(--color-border)]" />
+                  <span className="text-[10px] font-semibold tracking-widest uppercase text-[var(--color-text-dim)] px-2 py-0.5 rounded glass">
+                    PoxiTools ⚡ · Utilidades
+                  </span>
+                  <div className="h-px flex-1 bg-[var(--color-border)]" />
+                </div>
+              )}
+              {i === 0 && (
+                <div className="flex items-center gap-3 mb-5">
+                  <span className="text-[10px] font-semibold tracking-widest uppercase text-[var(--color-text-dim)] px-2 py-0.5 rounded glass">
+                    PoxiTools ⚡ · Sistema
+                  </span>
+                  <div className="h-px flex-1 bg-[var(--color-border)]" />
+                </div>
+              )}
               <SectionHeader icon={group.icon} title={t(group.categoryKey)} color={group.color} />
               <div className="space-y-0.5 ml-1">
                 {group.items.map((item) => {
