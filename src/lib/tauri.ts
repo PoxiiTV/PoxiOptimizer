@@ -210,5 +210,6 @@ export const disableWindowsFeature = (id: string) => invoke<string>("disable_win
 
 /* Menú contextual PoxiTools */
 export const contextMenuInstalled = () => invoke<boolean>("context_menu_installed");
-export const installContextMenu = () => invoke<string>("install_context_menu");
+export const installContextMenu = (enabled: string[]) =>
+  invoke<string>("install_context_menu", { enabled });
 export const uninstallContextMenu = () => invoke<string>("uninstall_context_menu");

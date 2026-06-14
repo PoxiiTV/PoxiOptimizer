@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   MousePointer2,
   Monitor,
@@ -10,6 +10,8 @@ import {
   CheckCircle2,
   XCircle,
   Loader2,
+  Check,
+  Save,
   type LucideIcon,
 } from "lucide-react";
 import { Card, PageHeader } from "../components/ui";
@@ -21,6 +23,7 @@ import {
 } from "../lib/tauri";
 
 interface ToolItem {
+  id: string;
   emoji: string;
   name: string;
   desc: string;
@@ -39,9 +42,9 @@ const TOOL_GROUPS: ToolGroup[] = [
     color: "var(--color-accent)",
     icon: Monitor,
     items: [
-      { emoji: "🔄", name: "Reiniciar Explorador", desc: "Reinicia explorer.exe sin cerrar sesión" },
-      { emoji: "🖼️", name: "Reconstruir caché de iconos", desc: "Elimina IconCache.db y reinicia el Explorador" },
-      { emoji: "🗂️", name: "Limpiar caché de miniaturas", desc: "Elimina thumbcache_* y reinicia el Explorador" },
+      { id: "01_RestartExplorer", emoji: "🔄", name: "Reiniciar Explorador",        desc: "Reinicia explorer.exe sin cerrar sesión" },
+      { id: "02_RebuildIcons",    emoji: "🖼️", name: "Reconstruir caché de iconos", desc: "Elimina IconCache.db y reinicia el Explorador" },
+      { id: "03_ClearThumbs",     emoji: "🗂️", name: "Limpiar caché de miniaturas", desc: "Elimina thumbcache_* y reinicia el Explorador" },
     ],
   },
   {
@@ -49,10 +52,10 @@ const TOOL_GROUPS: ToolGroup[] = [
     color: "#f97316",
     icon: Trash2,
     items: [
-      { emoji: "🧹", name: "Liberar memoria", desc: "Fuerza GC y reduce el Working Set de los procesos" },
-      { emoji: "🗑️", name: "Eliminar temporales", desc: "Borra %TEMP% y C:\\Windows\\Temp" },
-      { emoji: "♻️", name: "Vaciar papelera", desc: "Vacía la papelera sin confirmación" },
-      { emoji: "👁️", name: "Mostrar/ocultar archivos ocultos", desc: "Alterna la visibilidad de archivos ocultos" },
+      { id: "04_FreeMemory",     emoji: "🧹", name: "Liberar memoria",              desc: "Fuerza GC y reduce el Working Set de los procesos" },
+      { id: "05_DeleteTemp",     emoji: "🗑️", name: "Eliminar temporales",          desc: "Borra %TEMP% y C:\\Windows\\Temp" },
+      { id: "06_EmptyRecycleBin",emoji: "♻️", name: "Vaciar papelera",              desc: "Vacía la papelera sin confirmación" },
+      { id: "07_ToggleHidden",   emoji: "👁️", name: "Mostrar/ocultar ocultos",      desc: "Alterna la visibilidad de archivos ocultos" },
     ],
   },
   {
@@ -60,9 +63,10 @@ const TOOL_GROUPS: ToolGroup[] = [
     color: "#22c55e",
     icon: Wifi,
     items: [
-      { emoji: "🌐", name: "Vaciar caché DNS", desc: "ipconfig /flushdns" },
-      { emoji: "📋", name: "Copiar IP local", desc: "Copia la IP al portapapeles en silencio" },
-      { emoji: "🔌", name: "Resetear adaptadores de red", desc: "Ejecuta netsh winsock/ip reset (requiere UAC)" },
+      { id: "08_FlushDNS",     emoji: "🌐", name: "Vaciar caché DNS",           desc: "ipconfig /flushdns" },
+      { id: "09_CopyIP",       emoji: "📋", name: "Copiar IP local",            desc: "Copia la IP al portapapeles" },
+      { id: "10_ResetNetwork", emoji: "🔌", name: "Resetear adaptadores de red",desc: "netsh winsock/ip reset (requiere UAC)" },
+      { id: "11_PingGoogle",   emoji: "📡", name: "Ping a Google",              desc: "Abre CMD y hace ping a 8.8.8.8" },
     ],
   },
   {
@@ -70,9 +74,10 @@ const TOOL_GROUPS: ToolGroup[] = [
     color: "#a855f7",
     icon: Zap,
     items: [
-      { emoji: "🖥️", name: "Apagar pantalla", desc: "Apaga el monitor sin bloquear la sesión" },
-      { emoji: "🌙", name: "Modo noche", desc: "Abre la configuración de luz nocturna" },
-      { emoji: "⚡", name: "Plan de energía  ▶", desc: "Submenú: Alto rendimiento / Equilibrado / Ahorro" },
+      { id: "12_TurnOffScreen", emoji: "🖥️", name: "Apagar pantalla",     desc: "Apaga el monitor sin bloquear la sesión" },
+      { id: "13_NightLight",    emoji: "🌙", name: "Modo noche",           desc: "Abre la configuración de luz nocturna" },
+      { id: "14_LockScreen",    emoji: "🔒", name: "Bloquear pantalla",    desc: "Bloquea la sesión al instante (Win+L)" },
+      { id: "15_PowerPlan",     emoji: "⚡", name: "Plan de energía  ▶",  desc: "Submenú: Alto rendimiento / Equilibrado / Ahorro" },
     ],
   },
   {
@@ -80,24 +85,29 @@ const TOOL_GROUPS: ToolGroup[] = [
     color: "#f59e0b",
     icon: Wrench,
     items: [
-      { emoji: "📊", name: "Administrador de tareas", desc: "Lanza taskmgr.exe" },
-      { emoji: "📝", name: "Editor de Registro", desc: "Lanza regedit.exe" },
-      { emoji: "💻", name: "PowerShell como admin", desc: "Abre una consola elevada" },
-      { emoji: "⌨️", name: "CMD como admin", desc: "Abre el símbolo del sistema elevado" },
-      { emoji: "⚡", name: "Abrir PoxiOptimizer", desc: "Lanza PoxiOptimizer directamente" },
+      { id: "16_TaskMgr",       emoji: "📊", name: "Administrador de tareas",       desc: "Lanza taskmgr.exe" },
+      { id: "17_RegEdit",       emoji: "📝", name: "Editor de Registro",            desc: "Lanza regedit.exe" },
+      { id: "18_PsAdmin",       emoji: "💻", name: "PowerShell como admin",         desc: "Abre una consola elevada" },
+      { id: "19_CmdAdmin",      emoji: "⌨️", name: "CMD como admin",               desc: "Abre el símbolo del sistema elevado" },
+      { id: "20_DevMgmt",       emoji: "⚙️", name: "Administrador de dispositivos", desc: "devmgmt.msc — drivers y hardware" },
+      { id: "21_Msconfig",      emoji: "🔧", name: "Configuración del sistema",     desc: "msconfig — inicio, servicios, arranque" },
+      { id: "22_PoxiOptimizer", emoji: "⚡", name: "Abrir PoxiOptimizer",          desc: "Lanza PoxiOptimizer directamente" },
     ],
   },
 ];
 
-function SectionHeader({
-  icon: Icon,
-  title,
-  color,
-}: {
-  icon: LucideIcon;
-  title: string;
-  color: string;
-}) {
+const ALL_IDS = TOOL_GROUPS.flatMap((g) => g.items.map((i) => i.id));
+const LS_KEY  = "poxitools_enabled_items";
+
+function loadEnabled(): Set<string> {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) return new Set(JSON.parse(raw) as string[]);
+  } catch {}
+  return new Set(ALL_IDS);
+}
+
+function SectionHeader({ icon: Icon, title, color }: { icon: LucideIcon; title: string; color: string }) {
   return (
     <p className="text-sm font-semibold mb-2 flex items-center gap-2.5">
       <span
@@ -112,10 +122,13 @@ function SectionHeader({
 }
 
 export function ContextMenu() {
-  const t = useT();
+  const t        = useT();
   const pushToast = useStore((s) => s.pushToast);
-  const [installed, setInstalled] = useState<boolean | null>(null);
-  const [busy, setBusy] = useState(false);
+
+  const [installed, setInstalled]   = useState<boolean | null>(null);
+  const [busy,      setBusy]        = useState(false);
+  const [enabled,   setEnabled]     = useState<Set<string>>(loadEnabled);
+  const [dirty,     setDirty]       = useState(false);
 
   useEffect(() => {
     contextMenuInstalled()
@@ -131,8 +144,11 @@ export function ContextMenu() {
         setInstalled(false);
         pushToast(t("cm.removed"), "success");
       } else {
-        await installContextMenu();
+        const ids = Array.from(enabled);
+        localStorage.setItem(LS_KEY, JSON.stringify(ids));
+        await installContextMenu(ids);
         setInstalled(true);
+        setDirty(false);
         pushToast(t("cm.installed"), "success");
       }
     } catch (e) {
@@ -142,15 +158,51 @@ export function ContextMenu() {
     }
   };
 
-  const totalTools = TOOL_GROUPS.reduce((n, g) => n + g.items.length, 0);
+  const toggleItem = (id: string) => {
+    setEnabled((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+    setDirty(true);
+  };
+
+  const toggleAll = () => {
+    const allOn = enabled.size === ALL_IDS.length;
+    setEnabled(allOn ? new Set() : new Set(ALL_IDS));
+    setDirty(true);
+  };
+
+  const saveConfig = async () => {
+    const ids = Array.from(enabled);
+    localStorage.setItem(LS_KEY, JSON.stringify(ids));
+    if (!installed) {
+      setDirty(false);
+      pushToast("Preferencias guardadas", "success");
+      return;
+    }
+    setBusy(true);
+    try {
+      await installContextMenu(ids);
+      setDirty(false);
+      pushToast("Menú actualizado correctamente", "success");
+    } catch (e) {
+      pushToast(String(e), "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const totalEnabled = enabled.size;
+  const allOn        = totalEnabled === ALL_IDS.length;
 
   return (
     <div>
       <PageHeader icon={MousePointer2} title={t("cm.title")} subtitle={t("cm.subtitle")} />
 
-      {/* Tarjeta de estado + toggle */}
+      {/* Tarjeta de estado */}
       <Card className="p-0 mb-4 overflow-hidden">
-        {/* Banda de estado */}
         <div className="px-5 pt-5 pb-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
@@ -164,7 +216,7 @@ export function ContextMenu() {
                 <div>
                   <p className="font-semibold text-sm leading-tight">PoxiTools ⚡</p>
                   <p className="text-xs text-[var(--color-text-dim)]">
-                    Clic derecho → submenú con {totalTools} herramientas
+                    Clic derecho → submenú con {ALL_IDS.length} herramientas
                   </p>
                 </div>
               </div>
@@ -173,7 +225,6 @@ export function ContextMenu() {
               </p>
             </div>
 
-            {/* Badge de estado */}
             <div className="shrink-0 mt-0.5">
               {installed === null ? (
                 <span className="flex items-center gap-1.5 text-xs text-[var(--color-text-dim)] px-3 py-1.5 rounded-full glass">
@@ -196,7 +247,6 @@ export function ContextMenu() {
           </div>
         </div>
 
-        {/* Botón de acción */}
         <div className="px-5 pb-5">
           <motion.button
             whileTap={{ scale: 0.97 }}
@@ -208,47 +258,104 @@ export function ContextMenu() {
                 : "accent-gradient text-white shadow-lg shadow-[#6d8bff]/30"
             }`}
           >
-            {busy ? (
-              <Loader2 size={15} className="animate-spin" />
-            ) : (
-              <MousePointer2 size={15} />
-            )}
+            {busy ? <Loader2 size={15} className="animate-spin" /> : <MousePointer2 size={15} />}
             {installed ? t("cm.deactivateBtn") : t("cm.activateBtn")}
           </motion.button>
         </div>
       </Card>
 
-      {/* Lista de herramientas incluidas */}
+      {/* Tarjeta de personalización */}
       <Card className="p-5">
-        <p className="text-sm font-semibold mb-4">{t("cm.tools")}</p>
+        {/* Cabecera */}
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-sm font-semibold">{t("cm.tools")}</p>
+          <button
+            onClick={toggleAll}
+            className="text-xs text-[var(--color-accent)] hover:underline transition-opacity"
+          >
+            {allOn ? "Desmarcar todo" : "Marcar todo"}
+          </button>
+        </div>
+
+        {/* Lista de herramientas */}
         <div className="space-y-5">
           {TOOL_GROUPS.map((group) => (
             <div key={group.categoryKey}>
-              <SectionHeader
-                icon={group.icon}
-                title={t(group.categoryKey)}
-                color={group.color}
-              />
+              <SectionHeader icon={group.icon} title={t(group.categoryKey)} color={group.color} />
               <div className="space-y-0.5 ml-1">
-                {group.items.map((item) => (
-                  <div
-                    key={item.name}
-                    className="flex items-center gap-3 px-2 py-1.5 rounded-lg hover:bg-[var(--color-surface-hover)] transition-colors"
-                  >
-                    <span className="text-base w-6 text-center shrink-0 select-none">
-                      {item.emoji}
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium leading-tight">{item.name}</p>
-                      <p className="text-xs text-[var(--color-text-dim)] leading-tight mt-0.5 truncate">
-                        {item.desc}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                {group.items.map((item) => {
+                  const on = enabled.has(item.id);
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => toggleItem(item.id)}
+                      className="w-full flex items-center gap-3 px-2 py-1.5 rounded-lg hover:bg-[var(--color-surface-hover)] transition-colors text-left"
+                    >
+                      <span className="text-base w-6 text-center shrink-0 select-none">
+                        {item.emoji}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-medium leading-tight transition-opacity ${on ? "" : "opacity-40"}`}>
+                          {item.name}
+                        </p>
+                        <p className={`text-xs text-[var(--color-text-dim)] leading-tight mt-0.5 truncate transition-opacity ${on ? "" : "opacity-30"}`}>
+                          {item.desc}
+                        </p>
+                      </div>
+                      {/* Checkbox */}
+                      <div
+                        className={`w-5 h-5 rounded-md border-2 shrink-0 flex items-center justify-center transition-all ${
+                          on
+                            ? "border-[var(--color-accent)] bg-[var(--color-accent)]"
+                            : "border-[var(--color-border)]"
+                        }`}
+                      >
+                        <AnimatePresence>
+                          {on && (
+                            <motion.div
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              exit={{ scale: 0 }}
+                              transition={{ duration: 0.12 }}
+                            >
+                              <Check size={11} className="text-white" />
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Footer: contador + botón guardar */}
+        <div className="mt-5 pt-4 border-t border-[var(--color-border)] flex items-center justify-between gap-4">
+          <p className="text-xs text-[var(--color-text-dim)]">
+            <span className="font-semibold text-[var(--color-text)]">{totalEnabled}</span>
+            {" / "}{ALL_IDS.length} herramientas activadas
+          </p>
+
+          <AnimatePresence>
+            {dirty && (
+              <motion.button
+                key="save"
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                transition={{ duration: 0.15 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={saveConfig}
+                disabled={busy}
+                className="accent-gradient text-white px-4 h-9 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-lg shadow-[#6d8bff]/25 disabled:opacity-50"
+              >
+                {busy ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
+                {installed ? "Guardar y aplicar" : "Guardar preferencias"}
+              </motion.button>
+            )}
+          </AnimatePresence>
         </div>
       </Card>
     </div>
