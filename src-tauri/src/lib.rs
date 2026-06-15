@@ -130,6 +130,8 @@ pub fn run() {
             contextmenu::context_menu_installed,
             contextmenu::install_context_menu,
             contextmenu::uninstall_context_menu,
+            contextmenu::get_classic_context_menu,
+            contextmenu::set_classic_context_menu,
         ])
         .run(tauri::generate_context!())
         .expect("error al ejecutar PoxiOptimizer");

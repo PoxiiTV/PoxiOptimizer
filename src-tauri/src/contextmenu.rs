@@ -198,6 +198,51 @@ if ('22_PoxiOptimizer' -in $enabled) {
 }
 "#;
 
+// ── Menú clásico de Windows ───────────────────────────────────────────────────
+//
+// El menú moderno de W11 ignora Directory\Background\shell\ (requeriría un
+// servidor COM/DLL). La solución práctica: desactivar el menú nuevo vía registro.
+// Clave: HKCU\...\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32 = ""
+
+const CLASSIC_KEY: &str =
+    r"HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32";
+const CLASSIC_KEY_PARENT: &str =
+    r"HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}";
+
+#[tauri::command(async)]
+pub fn get_classic_context_menu() -> bool {
+    let script = format!("if (Test-Path '{}') {{ 'yes' }} else {{ 'no' }}", CLASSIC_KEY);
+    matches!(ps::run_powershell(&script), Ok(out) if out.stdout.trim() == "yes")
+}
+
+#[tauri::command(async)]
+pub fn set_classic_context_menu(enable: bool) -> Result<String, String> {
+    let script = if enable {
+        format!(
+            "New-Item -Path '{}' -Force | Out-Null; \
+             Set-ItemProperty -Path '{}' -Name '(Default)' -Value '' -Force; \
+             Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue; \
+             Start-Sleep -Seconds 1; Start-Process explorer",
+            CLASSIC_KEY, CLASSIC_KEY
+        )
+    } else {
+        format!(
+            "Remove-Item -Path '{}' -Recurse -Force -ErrorAction SilentlyContinue; \
+             Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue; \
+             Start-Sleep -Seconds 1; Start-Process explorer",
+            CLASSIC_KEY_PARENT
+        )
+    };
+    ps::run_powershell(&script)?;
+    Ok(if enable {
+        "Menú clásico activado. Explorer reiniciado.".into()
+    } else {
+        "Menú moderno de Windows 11 restaurado.".into()
+    })
+}
+
+// ── Estado e instalación de PoxiTools ────────────────────────────────────────
+
 #[tauri::command(async)]
 pub fn context_menu_installed() -> bool {
     let script = format!(

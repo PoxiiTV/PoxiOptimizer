@@ -20,6 +20,8 @@ import {
   contextMenuInstalled,
   installContextMenu,
   uninstallContextMenu,
+  getClassicContextMenu,
+  setClassicContextMenu,
 } from "../lib/tauri";
 
 interface ToolItem {
@@ -131,16 +133,38 @@ export function ContextMenu() {
   const t        = useT();
   const pushToast = useStore((s) => s.pushToast);
 
-  const [installed, setInstalled]   = useState<boolean | null>(null);
-  const [busy,      setBusy]        = useState(false);
-  const [enabled,   setEnabled]     = useState<Set<string>>(loadEnabled);
-  const [dirty,     setDirty]       = useState(false);
+  const [installed,     setInstalled]     = useState<boolean | null>(null);
+  const [busy,          setBusy]          = useState(false);
+  const [enabled,       setEnabled]       = useState<Set<string>>(loadEnabled);
+  const [dirty,         setDirty]         = useState(false);
+  const [classicMenu,   setClassicMenu]   = useState<boolean | null>(null);
+  const [classicBusy,   setClassicBusy]   = useState(false);
 
   useEffect(() => {
     contextMenuInstalled()
       .then(setInstalled)
       .catch(() => setInstalled(false));
+    getClassicContextMenu()
+      .then(setClassicMenu)
+      .catch(() => setClassicMenu(false));
   }, []);
+
+  const toggleClassicMenu = async () => {
+    setClassicBusy(true);
+    try {
+      const next = !classicMenu;
+      await setClassicContextMenu(next);
+      setClassicMenu(next);
+      pushToast(
+        next ? "Menú clásico activado · Explorer reiniciado" : "Menú moderno de W11 restaurado",
+        "success"
+      );
+    } catch (e) {
+      pushToast(String(e), "error");
+    } finally {
+      setClassicBusy(false);
+    }
+  };
 
   const toggle = async () => {
     setBusy(true);
@@ -206,6 +230,46 @@ export function ContextMenu() {
   return (
     <div>
       <PageHeader icon={MousePointer2} title={t("cm.title")} subtitle={t("cm.subtitle")} />
+
+      {/* Tarjeta: menú clásico de Windows */}
+      <Card className="p-4 mb-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold leading-tight">Menú clásico de Windows</p>
+            <p className="text-xs text-[var(--color-text-dim)] mt-0.5 leading-relaxed">
+              Desactiva el menú moderno de W11 y muestra siempre el clásico.
+              <span className="block mt-0.5 text-[var(--color-text-muted)]">
+                PoxiTools solo aparece en el menú clásico — activa esto para verlo siempre sin "Mostrar más opciones".
+              </span>
+            </p>
+          </div>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={toggleClassicMenu}
+            disabled={classicBusy || classicMenu === null}
+            className="shrink-0 relative w-11 h-6 rounded-full transition-colors duration-200 disabled:opacity-40 focus:outline-none"
+            style={{
+              background: classicMenu
+                ? "var(--color-accent)"
+                : "var(--color-border)",
+            }}
+            aria-label="Toggle menú clásico"
+          >
+            {classicBusy ? (
+              <Loader2
+                size={12}
+                className="absolute inset-0 m-auto animate-spin text-white"
+              />
+            ) : (
+              <motion.span
+                className="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-sm"
+                animate={{ x: classicMenu ? 20 : 0 }}
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              />
+            )}
+          </motion.button>
+        </div>
+      </Card>
 
       {/* Tarjeta de estado */}
       <Card className="p-0 mb-4 overflow-hidden">

@@ -213,3 +213,6 @@ export const contextMenuInstalled = () => invoke<boolean>("context_menu_installe
 export const installContextMenu = (enabled: string[]) =>
   invoke<string>("install_context_menu", { enabled });
 export const uninstallContextMenu = () => invoke<string>("uninstall_context_menu");
+export const getClassicContextMenu = () => invoke<boolean>("get_classic_context_menu");
+export const setClassicContextMenu = (enable: boolean) =>
+  invoke<string>("set_classic_context_menu", { enable });
