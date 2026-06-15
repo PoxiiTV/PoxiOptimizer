@@ -4,6 +4,62 @@ Todas las versiones notables de PoxiOptimizer. / All notable versions of PoxiOpt
 
 ---
 
+## [3.6.0] — 2026-06-16
+
+### 🇪🇸 Español
+
+#### ✨ Novedades
+
+- **🖱️ Menú Contextual PoxiTools** — Nueva sección completa en el sidebar. Instala un submenú "PoxiTools ⚡" en el clic derecho del escritorio y de cualquier carpeta con **22 herramientas del sistema** accesibles al instante, sin abrir la app.
+- **Dos submenús separados** — Las 22 herramientas se dividen en **PoxiTools ⚡ Sistema** (Sistema · Limpieza · Red) y **PoxiTools ⚡ Utilidades** (Pantalla · Herramientas) para evitar el límite de altura del menú de Windows.
+- **Notificaciones nativas de Windows** — Cada herramienta muestra un toast de Windows en la esquina inferior derecha al completarse. Sin popups, sin ventanas.
+- **Sin flash de ventana negra** — Las acciones se lanzan vía `wscript.exe //B` con `SW_HIDE=0`, eliminando completamente el parpadeo de CMD que aparecía en versiones anteriores.
+- **Icono ⚡ en cada entrada** — Todas las entradas del menú muestran el icono de PoxiOptimizer gracias al valor `Icon` en el registro.
+- **Personalización de herramientas** — Panel con checkboxes para activar o desactivar cada herramienta individualmente. Botón **Guardar y aplicar** reinstala el menú al instante con la selección elegida. La configuración se recuerda entre sesiones.
+- **Toggle "Menú clásico de Windows"** — Activa o desactiva el menú contextual clásico de Windows 11 con un solo switch. Al activarlo, el menú moderno (redondeado) desaparece y PoxiTools es siempre visible sin necesitar "Mostrar más opciones". Explorer se reinicia automáticamente.
+
+#### 🆕 Herramientas del menú contextual
+
+| Herramienta | Qué hace |
+|---|---|
+| 🔒 Bloquear pantalla | Bloquea la sesión al instante |
+| 📡 Ping a Google | Abre CMD y hace ping a 8.8.8.8 para verificar conexión |
+| ⚙️ Administrador de dispositivos | Lanza `devmgmt.msc` |
+| 🔧 Configuración del sistema | Lanza `msconfig` — inicio, servicios, arranque |
+
+#### ⚡ Mejoras
+- El menú contextual es **completamente silencioso**: las acciones se ejecutan en segundo plano sin ninguna ventana visible.
+- La reinstalación del menú limpia y regenera automáticamente los scripts en `C:\ProgramData\PoxiOptimizer\contextmenu`.
+
+---
+
+### 🇬🇧 English
+
+#### ✨ What's new
+
+- **🖱️ PoxiTools Context Menu** — Brand new sidebar section. Installs a "PoxiTools ⚡" submenu on right-click of the desktop and any folder, giving instant access to **22 system tools** without opening the app.
+- **Two separate submenus** — The 22 tools are split into **PoxiTools ⚡ Sistema** (System · Cleanup · Network) and **PoxiTools ⚡ Utilidades** (Display · Tools) to work around Windows' context menu height limit.
+- **Native Windows notifications** — Every tool shows a Windows toast notification in the bottom-right corner when it finishes. No popups, no extra windows.
+- **Zero CMD flash** — Actions launch via `wscript.exe //B` with `SW_HIDE=0`, completely eliminating the brief black window flicker seen in earlier builds.
+- **⚡ Icon on every entry** — All menu entries display the PoxiOptimizer icon via the registry `Icon` value.
+- **Tool customization panel** — Checkbox list to enable or disable each tool individually. **Save & apply** button reinstalls the menu instantly with the chosen selection. Settings are remembered between sessions.
+- **"Classic Windows menu" toggle** — One switch to always force the classic Windows 11 context menu. When enabled, the modern rounded menu disappears and PoxiTools is always visible without needing "Show more options". Explorer restarts automatically.
+
+#### 🆕 New context menu tools
+
+| Tool | What it does |
+|---|---|
+| 🔒 Lock screen | Locks the session instantly |
+| 📡 Ping Google | Opens CMD and pings 8.8.8.8 to check connectivity |
+| ⚙️ Device Manager | Launches `devmgmt.msc` |
+| 🔧 System Configuration | Launches `msconfig` — startup, services, boot |
+
+#### ⚡ Improvements
+- Context menu is **completely silent**: actions run in the background with no visible window at any point.
+- Menu reinstallation automatically cleans and regenerates scripts in `C:\ProgramData\PoxiOptimizer\contextmenu`.
+
+---
+
 ## [3.5.2] — 2026-06-12
 
 ### 🇪🇸 Español
