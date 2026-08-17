@@ -9,7 +9,7 @@
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev)
 [![Rust](https://img.shields.io/badge/Rust-1.91-000000?logo=rust&logoColor=white)](https://www.rust-lang.org)
 [![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?logo=windows&logoColor=white)](#)
-[![License](https://img.shields.io/badge/license-MIT-9b5cf6)](LICENSE)
+[![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial-9b5cf6)](LICENSE)
 
 *Interfaz glassmorphism · ejecutable ligero · 100 % seguro y reversible*
 
@@ -142,6 +142,14 @@ Inspirado en / Inspired by:
 La función de activación descarga y ejecuta el script oficial de **MAS** (proyecto de terceros, open-source). Úsala bajo tu responsabilidad. PoxiOptimizer no aloja ni modifica dicho script.
 
 The activation feature downloads and runs the official **MAS** script (third-party, open-source project). Use at your own risk. PoxiOptimizer does not host or modify that script.
+
+## 📜 Licencia / License
+
+**PoxiOptimizer** se distribuye bajo la **PolyForm Noncommercial License 1.0.0** 🔒.
+
+Libre para **uso personal** — optimizar y mantener tu Windows, aprender y experimentar. Prohibido el **uso comercial**: no se puede vender ni obtener beneficio económico con este proyecto.
+
+📄 Texto completo en [`LICENSE`](LICENSE).
 
 <div align="center">
 
