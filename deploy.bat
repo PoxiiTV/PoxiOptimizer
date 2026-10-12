@@ -9,6 +9,9 @@ echo.
 echo   == PoxiOptimizer - deploy ==
 echo.
 
+REM 0. Borra instaladores de versiones anteriores para no copiarlos
+del /q "src-tauri\target\release\bundle\nsis\*-setup.exe" 2>nul
+
 REM 1. Compila la version de produccion (frontend + binario nativo)
 echo   Compilando release...
 call npm run tauri build
