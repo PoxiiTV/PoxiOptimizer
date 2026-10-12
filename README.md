@@ -1,5 +1,7 @@
 <div align="center">
 
+![PoxiOptimizer](assets/banner.png)
+
 # ⚡ PoxiOptimizer
 
 **La herramienta definitiva para optimizar, limpiar y activar Windows.**
