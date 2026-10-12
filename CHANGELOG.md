@@ -4,6 +4,24 @@ Todas las versiones notables de PoxiOptimizer. / All notable versions of PoxiOpt
 
 ---
 
+## [3.6.1] — 2026-10-12
+
+### 🇪🇸 Español
+
+#### 🎨 Cambios
+
+- **Icono nuevo** — PoxiOptimizer estrena icono con el estilo de la familia de programas de Poxi: una P pixelada con un rayo.
+- **Nítido en cualquier tamaño** — versiones dibujadas a mano para 16, 20, 24, 32, 40, 48, 64, 128 y 256 px, para que se vea limpio en la barra de tareas, el explorador y el escritorio.
+
+### 🇬🇧 English
+
+#### 🎨 Changes
+
+- **New icon** — PoxiOptimizer gets a new icon in the style of the Poxi app family: a pixel-art P with a lightning bolt.
+- **Sharp at every size** — hand-drawn versions for 16, 20, 24, 32, 40, 48, 64, 128 and 256 px, so it looks clean in the taskbar, Explorer and on the desktop.
+
+---
+
 ## [3.6.0] — 2026-06-16
 
 ### 🇪🇸 Español

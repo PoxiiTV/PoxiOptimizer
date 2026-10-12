@@ -1,5 +1,6 @@
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { Minus, Square, X, Sparkles } from "lucide-react";
+import { Minus, Square, X } from "lucide-react";
+import logo from "../assets/logo.png";
 import { useStore } from "../store";
 
 export function TitleBar() {
@@ -12,9 +13,7 @@ export function TitleBar() {
       className="h-12 flex items-center justify-between px-4 shrink-0 border-b border-[var(--color-border)] select-none"
     >
       <div data-tauri-drag-region className="flex items-center gap-2.5 pointer-events-none">
-        <div className="grid place-items-center w-7 h-7 rounded-lg accent-gradient">
-          <Sparkles size={16} className="text-white" strokeWidth={2.4} />
-        </div>
+        <img src={logo} alt="" className="w-7 h-7 rounded-lg" style={{ imageRendering: "pixelated" }} />
         <span className="font-semibold text-[15px] tracking-tight">
           Poxi<span className="text-gradient">Optimizer</span>
         </span>
