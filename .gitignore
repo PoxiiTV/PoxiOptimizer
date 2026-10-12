@@ -28,3 +28,6 @@ deploy-hosting
 
 # Carpeta de simulación (build temporal local, no se versiona)
 simulador/
+
+# Configuración local de herramientas (no se versiona)
+.claude/
